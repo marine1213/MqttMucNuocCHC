@@ -2,9 +2,9 @@
   "version": 2,
   "name": "nodejs-mysql",
   "builds": [
-    { "src": "Server/mqttNodeSv.js", "use": "@vercel/node" }
+    { "src": "api/mqttNodeSv.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/Server/mqttNodeSv.js" }
+    { "src": "/(.*)", "dest": "/*" }
   ]
 }
