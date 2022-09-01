@@ -1,0 +1,169 @@
+/*This contains:custom_lib+custom_scrollbar*/
+/*description="custom-lib"*/
+	.hidden{display: none;}
+	.unseen{visibility: hidden;}
+	.divider{background-color: #282d2f; height: 1px}
+	.ptr{cursor: pointer;}
+
+	.pad10p{padding: 10px}
+	.bot12p{padding-bottom: 12px}
+	.bot10p{padding-bottom: 10px}
+	.pR4px{padding-right: 4px}
+	.pT5px{padding-top: 5px;}
+	.pLR15px{padding: 5px 5px 5px 15px}
+	.pLR7px{padding: 2px 2px 2px 7px}
+	.pb80p{padding-bottom: 80px}
+	.pb250p{padding-bottom: 250px}
+
+	.padAvatar{padding: 2px; padding-right: 8px}
+
+	.m0px{margin: 0}
+	.mT10p{margin-top: 10px}
+	.mT20p{margin-top: 20px}
+	.mT40p{margin-top: 40px}
+	.mT80p{margin-top: 80px}
+	.mT180p{margin-top: 180px}
+	.mT240p{margin-top: 240px}
+	.mb4p{margin-bottom: 4px}
+	.mb10p{margin-bottom: 10px}
+	.mb20p{margin-bottom: 20px}
+	.mb40p{margin-bottom: 40px}
+	.mb80p{margin-bottom: 80px}
+	.m2p{margin: 2px}
+	.m5p{margin: 5px}
+	.divCenter{margin: auto;}
+
+	.txOnImg{text-shadow: 1px 1px #000;}
+	.txBold{font-weight: bold;}
+	.subTx{color: #595b5c}
+	.txCenter{text-align: center;}
+	.txLeft{text-align: left;}
+	.txRight{text-align: right;}
+
+	.line2p5{line-height: 2.5}
+	.line3{line-height: 3}
+	.line4{line-height: 4}
+
+	.txLarge{font-size: 22px}
+	.txSmall{font-size: 12px}
+	.txxLarge{font-size: 24px}
+
+	.fullh{height: 100%}
+	.fullw{width: 100%}
+	.w95{width: 95%}
+	.w97{width: 97%}
+	.progressHeight{height: 8px}
+
+	.width85{width: 85%}
+	.width80{width: 80%}
+	.width75{width: 75%}
+	.width70{width: 70%}
+	.width50{width: 50%}
+	.w40{width: 40%}
+	.width30{width: 30%}
+	.width25{width: 25%}
+	.width20{width: 20%}
+	.width15{width: 15%}
+	.width5{width: 5%}
+	.leastWidth{width: 1%}
+
+	.width150px{width: 150px}
+
+	.txWhite{color: white}
+	.txBlack{color: black}
+	
+	.overYAuto{overflow-y: auto;}
+	.overXAuto{overflow-x:auto;}
+
+	.zlv4{z-index: 4}
+	.zlv2{z-index: 2}
+	label{font-size: 12px}
+
+	.fadeUnder{opacity: 50%;position: relative;}
+	.fadeAbove{top:0;left:0;position: absolute;}
+	.fadeContainer{position: relative;}
+
+	.table-no-border thead tr{border: 0}
+	.table-no-border tbody tr{border: 0}
+
+	.rotate90 {/*Credit to:  https://stackoverflow.com/questions/20061774/rotate-an-image-in-image-source-in-html*/
+	    transform: rotate(90deg);
+	}
+
+	@media print {
+	    .pagebreak {
+	        clear: both;
+	        page-break-after: always;
+	    }
+	    .printHidden{
+	    	display: none;
+	    }
+        @page {
+	      size: A4; /* DIN A4 standard, Europe */
+	      /*margin: auto 0 auto 0;*/
+	      /*margin: 0;*/
+	      margin: 6mm 16mm 6mm 27mm;
+	      /*margin-left: 16mm;*/
+	    }
+	    html, body {
+	        width: 210mm;
+	        /* height: 297mm; */
+	        height: 282mm;
+	        font-size: 16px;
+	        background: #FFF;
+	        overflow:visible;
+  			font-family: "Times New Roman", Times, serif;
+	    }
+	    body {
+	        padding-top:15mm;
+	    }
+	    .table-border-all, .table-border-all thead, .table-border-all thead tr th, .table-border-all thead tr td, .table-border-all tbody, .table-border-all tbody tr, .table-border-all tbody tr td {
+			border: 1px solid black;
+  			border-collapse: collapse;
+  			font-size: 14px;
+  			font-family: "Times New Roman", Times, serif;
+		}
+		.padding-table tbody tr td{padding: 4px 10px;line-height: 2.5;}
+
+		.timesFont, h1, h2, h3, h4, h5, p, div	{font-family: "Times New Roman", Times, serif;}
+
+		.pageDoubleBlueBorder{border: 4px solid blue}
+		.pageDoubleBlueSubBorder{border: 2px solid blue}
+	}
+/*=======================================*/
+
+/*description="circle"*/
+	/*Credit to: https://stackoverflow.com/questions/55281672/make-plus-symbol-in-css*/
+	.mplus {
+		display:inline-block;width:18px;height: 18px;
+		margin: 3px 6px 3px 0;
+
+	  background:linear-gradient(#4caf50,#4caf50),linear-gradient(#4caf50,#4caf50);
+	  background-position:center;
+	  background-size: 90% 4px,4px 90%;
+	  background-repeat:no-repeat;
+	}
+
+	.mplus-alt {
+		display:inline-block;width:18px;height: 18px;
+		margin: 3px 6px 3px 0;
+
+	  background:linear-gradient(#000,#000),linear-gradient(#000,#000);
+	  background-position:center;
+	  background-size: 90% 4px,4px 90%;
+	  background-repeat:no-repeat;
+	}
+	.radius {border-radius:50%}
+/*=======================================*/
+
+/*description="custom-scrollbar"*/
+	/* Credit to: https://css-tricks.com/examples/WebKitScrollbars/*/
+	::-webkit-scrollbar {width: 12px;}
+
+	/* Track */
+	::-webkit-scrollbar-track {-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); -webkit-border-radius: 10px;border-radius: 10px;}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {-webkit-border-radius: 10px;border-radius: 10px;background: #595b5ccc;-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5)}
+	::-webkit-scrollbar-thumb:window-inactive {visibility: hidden}
+/*=======================================*/

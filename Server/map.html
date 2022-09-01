@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sơ đồ Đèn tim Khu bay</title>
+
+		<!--Jquery-->
+	<script   src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous"></script>
+
+
+	<!--Mapbox GL plugin mapbox.js -->
+	<script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
+	<link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
+
+	<!--Location Control Plugin-->
+	<script src='https://cdn.jsdelivr.net/leaflet.locatecontrol/0.49.0/L.Control.Locate.min.js'></script>
+	<link href='https://cdn.jsdelivr.net/leaflet.locatecontrol/0.49.0/L.Control.Locate.css' rel='stylesheet' />
+
+	<!--Tabletop and GeoJson
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.4.3/tabletop.min.js"></script>
+	<script src="js/geojson.js"></script>-->
+
+	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+	<!--leaflet Plugin-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+
+	<!--Mapbox plugin mapbox.js -->
+	<script src='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.js'></script>
+	<link href='https://api.mapbox.com/mapbox.js/v3.2.0/mapbox.css' rel='stylesheet' />
+
+	<!--Leaflet Fullscreen -->
+	<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+	<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+
+
+	<!--Fonts-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,900' rel='stylesheet' type='text/css'>
+
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+      #map {position : absolute;height : 100%;width : 100vw}
+    </style>
+  </head>
+  <body>
+
+	<div id="map" class="map"></div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // const loadEl = document.querySelector('#load');
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.firestore().doc('/foo/bar').get().then(() => { });
+        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        // firebase.analytics(); // call to activate
+        // firebase.analytics().logEvent('tutorial_completed');
+        // firebase.performance(); // call to activate
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+        // try {
+        //   let app = firebase.app();
+        //   let features = [
+        //     'auth', 
+        //     'firestore',
+        //     'analytics', 
+        //     'performance',
+        //   ].filter(feature => typeof app[feature] === 'function');
+        //   loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+        // } catch (e) {
+        //   console.error(e);
+        //   loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        // }
+      });
+    </script>
+    <script>
+	//================================map control===============================
+	var config={bearing:17,coorL:'[105.80615562601713, 21.218605193793564]',coorM:'[105.8043684, 21.2140661]',mapboxStyle:'mapbox://styles/cuongbk56/ckngt11310hdt17p80pgjhhw9',mapboxAccessToken:'pk.eyJ1IjoiY3VvbmdiazU2IiwiYSI6ImNqeHJzbWJxbDBjY3Yzb241aWY1Nmt6OG0ifQ.98MN1Dl1vrRJKbnkZTnxbQ'}
+	var mapPage = function(){
+
+	  var publicData = {};
+	  var loadedPopupList = [];
+	  var currentMarker = {lMarker:null};
+	  var lastMarkerFlag = false;
+	    
+	  var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);        
+	  // Credit to: https://stackoverflow.com/questions/1248081/get-the-browser-viewport-dimensions-with-javascript
+
+	  
+	//  var coorM = [105.8043684, 21.2140661]; //NB
+	//  var coorL = [105.80615562601713, 21.218605193793564]; //NB
+	  
+	  var coorM = JSON.parse(config.coorM);
+	  var coorL = JSON.parse(config.coorL);
+	  
+	  var centerCoor = w<751?coorM:coorL;
+	  var zoomlv = w < 449?12:w < 751?13:14;
+
+	  // GeoJSON object to hold the flag features
+	  var geojson = {"type": "FeatureCollection","features": []};
+	  
+	  var map = new mapboxgl.Map({
+	      container: 'map',
+	      style: 'mapbox://styles/cuongbk56/ckngt11310hdt17p80pgjhhw9',
+	     // style: 'mapbox://styles/iyalolo/cjzvyworg0c921cpbga1xmdn6', //Mapbox DenKB
+	      center: centerCoor,
+	      zoom: zoomlv, // starting zoom
+	     maxBounds: [[105.749537,21.188519],[105.892,21.274]],
+	      // bearing: parseInt(config.bearing),
+	     bearing: 17, // goc nghieng
+	     accessToken: 'pk.eyJ1IjoiY3VvbmdiazU2IiwiYSI6ImNqeHJzbWJxbDBjY3Yzb241aWY1Nmt6OG0ifQ.98MN1Dl1vrRJKbnkZTnxbQ'
+	      // accessToken: 'pk.eyJ1IjoiaXlhbG9sbyIsImEiOiJjamZ0dGg0YWwwbW8zMzNxa3RyM3U2YjN2In0.RZ0yJN-V8GbpPclRSIg_sw'
+	    });
+	    
+	  //Credit to: https://docs.mapbox.com/mapbox-gl-js/example/navigation/
+	  var geoLocOption = {
+	    positionOptions: {enableHighAccuracy:true,timeout:10000},
+	    fitBoundsOptions: {maxZoom: 19},
+	    trackUserLocation: true
+	  };
+	  var geoLocControl = new mapboxgl.GeolocateControl(geoLocOption);
+	  geoLocControl.on('geolocate', onLocationFound);
+	  
+	    // Add zoom and rotation controls to the map.
+	  map.addControl(new mapboxgl.NavigationControl(),'top-left');
+	  map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
+	  map.addControl(geoLocControl,'top-left');
+	  
+	  
+	//==========private===============
+	  //Register map events
+	  
+	    map.on('click', onMapClicked);
+	    map.on('moveend', function(e){
+	      // load data(coordinate, ten tam, su co, ngay) từ spreadsheet// theo vung zoom nhìn thấy
+	      // add marker theo coordinate
+	      // add popup theo onclick
+	      // loadMapPermissionCodeAndDataFromServer();
+	      
+	    });
+	    map.on('click','suco-flag', function(e){
+	     // xoa popup truoc
+	     if(loadedPopupList.length > 0)
+	       loadedPopupList.pop().remove();
+	     
+	     var coordinates = e.features[0].geometry.coordinates.slice();
+	     var markerData = e.features[0].properties;
+	     
+	     var loadedPopup = new mapboxgl.Popup({offset:[10,-30], closeOnClick:false, anchor:'bottom' })
+	     .setLngLat(coordinates)
+	     .setHTML(markerData.popupContent)
+	     .on('open',function(popup){
+	         // //log.event('onPopupData', 'loading image'); //TODO: put data into geojson
+	         
+	         if(markerData.imageList){
+	           var imgList = JSON.parse(markerData.imageList);  //sửa lỗi mảng JSON
+	           for(var imgId = 0; imgId < imgList.length; imgId++){
+	             var fileId = imgList[imgId];
+	             var imageLink = form.getImgLinkData(fileId);
+	             document.getElementById('img_'+fileId).src = imageLink;
+	           } 
+	         }
+	     })
+	     .on('close',function(popup){
+	         loadedPopupList.pop();
+	         //Credit to: https://stackoverflow.com/questions/3455405/how-do-i-remove-a-key-from-a-javascript-object
+	     });
+	     
+	     loadedPopupList.push(loadedPopup);
+	     loadedPopup.addTo(map);
+	   });
+	 	map.on('mouseenter', 'suco-flag', function(e) {
+		  // Change the cursor style as a UI indicator.
+		  map.getCanvas().style.cursor = 'pointer';
+		});
+		 
+		map.on('mouseleave', 'suco-flag', function() {
+		  map.getCanvas().style.cursor = '';
+		});
+
+//=============
+
+
+
+//=============
+
+	    map.on('load', function() {
+	        // //log.event('maploaded','add layer suco with data source');
+				map.addSource('geojson', {"type": "geojson","data": geojson});
+		        map.addLayer({
+		          id: 'suco-flag',
+		          type: 'symbol',
+		          source: 'geojson',
+		          layout: {
+		             "icon-image": "{icon}-30",
+		             "icon-allow-overlap": true,
+		             "icon-anchor": "bottom-left"
+		          }
+		       });
+		  //   let marker = new mapboxgl.Marker({draggable:true}).setLngLat([105.78887560293873,21.223737175440576]).addTo(map);
+				// let popup = new mapboxgl.Popup({ offset: 25, closeOnClick:false }).setText('25%.').setLngLat([105.78887560293873,21.223737175440576]);
+	   // 		marker.setPopup(popup);
+//=======
+		//https://docs.mapbox.com/mapbox-gl-js/example/add-image-animated/
+		// map.loadImage('./water-level.png',(error, image) => {
+		// 	if (error) throw error;
+		// 	map.addImage('custom-marker', image);
+		// 	map.addSource('points', {'type': 'geojson', 'data': { 'type': 'FeatureCollection','features': [
+		// 	 { 'type': 'Feature', 'geometry': { 'type': 'Point', 'coordinates': [105.78887560293873,21.223737175440576] }, 'properties': { 'title': 'TDZ1' } }
+		// 		]}});
+		// 	map.addLayer({ 'id': 'points', 'type': 'symbol', 'source': 'points', 'layout': { 'icon-image': 'custom-marker','text-field': ['get', 'title'], 'text-font': [ 'Open Sans Semibold', 'Arial Unicode MS Bold' ], 'text-offset': [0, 1.25], 'text-anchor': 'bottom-left',"icon-anchor": "bottom-left" } });
+		// });
+ 
+// Add a symbol layer
+map.addImage('pulsing-dot', pulsingDot, { pixelRatio: 2 });
+
+map.addImage('pulsing-dot1', pulsingDot1, { pixelRatio: 2 });
+map.addImage('pulsing-dot2', pulsingDot2, { pixelRatio: 2 });
+map.addImage('pulsing-dot3', pulsingDot3, { pixelRatio: 2 });
+map.addImage('pulsing-dot4', pulsingDot4, { pixelRatio: 2 });
+map.addImage('pulsing-dot5', pulsingDot5, { pixelRatio: 2 });
+map.addImage('pulsing-dot6', pulsingDot6, { pixelRatio: 2 });
+
+ 
+map.addSource('dot-point', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.78887560293873,21.223737175440576] // icon position [lng, lat]
+				}
+			},
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.80348418341092, 21.2195933238704] // icon position [lng, lat]
+				}
+			},
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.8134866870721, 21.216719206741303] // icon position [lng, lat]
+				}
+			},
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.81810698102122, 21.218197272169135] // icon position [lng, lat]
+				}
+			},
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.80802749639601, 21.221133887603074] // icon position [lng, lat]
+				}
+			},
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.79652625133053, 21.224384760140392] // icon position [lng, lat]
+				}
+			}
+		]
+	}
+
+});
+
+map.addSource('dot-point1', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.79652625133053, 21.224384760140392] // icon position [lng, lat]
+				}
+			}
+		]
+	}
+
+});
+
+map.addSource('dot-point2', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.80802749639601, 21.221133887603074] // icon position [lng, lat]
+				}
+			},
+		]
+	}
+
+});
+
+map.addSource('dot-point3', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.81810698102122, 21.218197272169135] // icon position [lng, lat]
+				}
+			}
+			
+		]
+	}
+
+});
+
+map.addSource('dot-point4', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.8134866870721, 21.216719206741303] // icon position [lng, lat]
+				}
+			}
+			
+		]
+	}
+
+});
+
+map.addSource('dot-point5', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.80348418341092, 21.2195933238704] // icon position [lng, lat]
+				}
+			}
+		]
+	}
+
+});
+
+map.addSource('dot-point6', {
+	'type': 'geojson',
+	'data': {
+		'type': 'FeatureCollection',
+		'features': [
+			{
+				'type': 'Feature',
+				'geometry': {
+					'type': 'Point',
+					'coordinates': [105.78887560293873,21.223737175440576] // icon position [lng, lat]
+				}
+			},
+		]
+	}
+
+});
+
+map.addLayer({'id': 'layer-with-pulsing-dot1', 'type': 'symbol', 'source': 'dot-point1', 'layout': { 'icon-image': 'pulsing-dot1' }  });
+map.addLayer({'id': 'layer-with-pulsing-dot2', 'type': 'symbol', 'source': 'dot-point2', 'layout': { 'icon-image': 'pulsing-dot2' }  });
+map.addLayer({'id': 'layer-with-pulsing-dot3', 'type': 'symbol', 'source': 'dot-point3', 'layout': { 'icon-image': 'pulsing-dot3' }  });
+map.addLayer({'id': 'layer-with-pulsing-dot4', 'type': 'symbol', 'source': 'dot-point4', 'layout': { 'icon-image': 'pulsing-dot4' }  });
+map.addLayer({'id': 'layer-with-pulsing-dot5', 'type': 'symbol', 'source': 'dot-point5', 'layout': { 'icon-image': 'pulsing-dot5' }  });
+map.addLayer({'id': 'layer-with-pulsing-dot6', 'type': 'symbol', 'source': 'dot-point6', 'layout': { 'icon-image': 'pulsing-dot6' }  });
+
+// map.addLayer({'id': 'layer-with-pulsing-dot', 'type': 'symbol', 'source': 'dot-point', 'layout': { 'icon-image': 'pulsing-dot' }  });
+
+
+	   		//=====
+	   });
+	//==========public===============      
+	  publicData.initMap = function(){
+	    if (!mapboxgl.supported()) 
+	      alert('Your browser does not support Mapbox GL');
+	  }
+	  
+	  publicData.addMarker = function(lat,lng,markerProperties){
+	    // //log.event('mapAddMarker','callback add marker');
+	    var pointJSON = {
+	      type: "Feature",
+	      geometry: {
+	        type: "Point",
+	        coordinates: [lng,lat]
+	      },
+	      properties: markerProperties
+	    };
+	    geojson.features.push(pointJSON);
+	    log.value('mapAddMarker', 'JSON: ' + JSON.stringify(geojson.features));
+	  }
+	  
+	  publicData.updateSource = function(){
+	    if(map&&geojson)
+	      map.getSource('geojson').setData(geojson);
+	  }
+	  publicData.removeMarker = function(tileName){
+	    // xoa marker 
+	    //log.event('remove marker','remove marker id= '+ tileName);
+	    loadedPopupList.pop().remove();
+	    geojson.features = geojson.features.filter(function(flag) {
+	      return flag.properties.tileName !== tileName;
+	    });
+	  }
+	  
+	  publicData.removeAllMarkers = function(){
+	    // xoa marker 
+	    //log.event('remove marker','remove all markers');
+	    if(loadedPopupList.length > 0)
+	      loadedPopupList.pop().remove();
+	    geojson.features = geojson.features.filter(function() {return false;});
+	  }  
+
+	  var stateHolding = 0;
+	  publicData.onAddDataMarker = function(lat,lng) {
+	    // xoa marker cũ
+	    if(lastMarkerFlag)
+	      removeLastMarker();
+	      
+	      
+	    // thêm marker mới và mở form nhập
+	    var tempMarker = new mapboxgl.Marker({draggable:true}).setLngLat([lng,lat]).addTo(map);
+	    tempMarker.on('dragstart', function(){ 
+	      var lngLat = currentMarker.lMarker.getLngLat(); 
+	      stateHolding = 0;
+	      setTimeout(function(){ if(stateHolding == 0) {currentMarker.lMarker.prevLngLat = lngLat;  currentMarker.lMarker.setLngLat(lngLat); stateHolding = 1;}},10000);
+	    });
+	    tempMarker.on('dragend', function(){ 
+	      if(stateHolding == 1)
+	        {currentMarker.lMarker.setLngLat(currentMarker.lMarker.prevLngLat); }
+	      var lngLat = currentMarker.lMarker.getLngLat();
+	      collectData(lngLat.lat,lngLat.lng);
+	      stateHolding = 2;
+	    });
+	    currentMarker.lMarker = tempMarker;
+	    lastMarkerFlag = true;
+	    collectData(lat,lng);
+	  }
+	  
+	  publicData.onQueryRenderedFeatures = function(e){
+	    return map.queryRenderedFeatures(e.point);
+	  }
+
+	  publicData.getMap = ()=>map;
+	//=====private data process=======
+	function collectData(lat,lng) {
+	  // form.setLatLng(lat,lng);
+	  
+	  // smoth openning popup
+	  setTimeout(function() {
+	  	// openOverlayForm(true,-1);
+	  }, 100);
+	}
+
+	  function removeLastMarker(){currentMarker.lMarker.remove();}
+	      return publicData;
+	}();
+
+	  function onLocationFound(position){
+	    var geoData = {
+	      lat: position.coords.latitude,
+	      lng: position.coords.longitude,
+	      accuracy: position.coords.accuracy,
+	    }
+	    log.value('onLocationFound','timestamp: '+ position.timestamp + '\n coor:'+JSON.stringify(geoData));
+	    // xóa marker cũ, thêm marker mới và mở form nhập
+	    mapPage.onAddDataMarker(geoData.lat, geoData.lng);
+	  }
+
+	   function onMapClicked(e){     
+	     //log.event('onMapClicked', 'add pointing marker');
+	     try{
+	       if(e != undefined){
+	         var features = mapPage.onQueryRenderedFeatures(e);
+	         if(features.length){ // neu click vao co thi ko phan ung alert(JSON.stringify(features));
+	         }
+	         else  // xóa marker cũ, thêm marker mới và mở form nhập
+	          {mapPage.onAddDataMarker(e.lngLat.lat,e.lngLat.lng); console.log(e.lngLat.lng+','+e.lngLat.lat);}
+	       }
+	     }catch(error){
+	         // log.error('mapClick',error);
+	     }
+	   }
+	   
+
+	//============================================================
+
+	var size = 100;
+ 
+// This implements `StyleImageInterface`
+// to draw a pulsing dot icon on the map.
+var renderGreen = function () {return renderGen(this,false)}
+
+var renderRed = function () {return renderGen(this,true)}
+
+var renderGen = function(thisPtr,isRed){
+	var duration = 1000;
+	var t = (performance.now() % duration) / duration;
+	 
+	var radius = (size / 2) * 0.3;
+	var outerRadius = (size / 2) * 0.7 * t + radius;
+	var context = thisPtr.context;
+	 
+	// Draw the outer circle.
+	context.clearRect(0, 0, thisPtr.width, thisPtr.height);
+	context.beginPath();
+	context.arc( thisPtr.width / 2, thisPtr.height / 2, outerRadius, 0, Math.PI * 2 );
+	context.fillStyle = 'rgba('+(isRed?'255, 200, 200,':'200,255,200,') + (1 - t) + ')';
+	context.fill();
+	 
+	// Draw the inner circle.
+	context.beginPath();
+	context.arc( thisPtr.width / 2, thisPtr.height / 2, radius, 0, Math.PI * 2 );
+	context.fillStyle = 'rgba('+(isRed?'255, 100, 100, 1)':'100, 255, 100, 1)');
+	context.strokeStyle = 'white';
+	context.lineWidth = 2 + 4 * (1 - t);
+	context.fill();
+	context.stroke();
+	 
+	// Update this image's data with data from the canvas.
+	thisPtr.data = context.getImageData( 0, 0, thisPtr.width, thisPtr.height ).data;
+	 
+	// Continuously repaint the map, resulting
+	// in the smooth animation of the dot.
+	mapPage.getMap().triggerRepaint();
+	 
+	// Return `true` to let the map know that the image was updated.
+	return true;
+}
+
+var pulsingDot1 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot2 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot3 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot4 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot5 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot6 = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+var pulsingDot = {width: size,height: size, data: new Uint8Array(size * size * 4), onAdd: function () { var canvas = document.createElement('canvas'); canvas.width = this.width; canvas.height = this.height; this.context = canvas.getContext('2d'); },render: renderGreen};
+
+	//Credit to: https://stackoverflow.com/questions/2803145/is-there-0b-or-something-similar-to-represent-a-binary-number-in-javascript
+	function codeToHeight(adcLv){
+		let output = {status:true,result:'init'};
+		switch(parseInt(adcLv)){
+				case 0b001111: output.result = 13; break;
+				case 0b100011: output.result = 12; break;
+				case 0b010011: output.result = 11; break;
+				case 0b001011: output.result = 10; break;
+				case 0b000111: output.result = 9; break;
+				case 0b100001: output.result = 8; break;
+				case 0b010001: output.result = 7; break;
+				case 0b001001: output.result = 6; break;
+				case 0b000101: output.result = 5; break;
+				case 0b000011: output.result = 4; break;
+				case 0b100000: output.result = 3; break;
+				case 0b010000: output.result = 2.5; break;
+				case 0b001000: output.result = 2; break;
+				case 0b000100: output.result = 1; break;
+				case 0b000010: output.result = 0.5; break;
+				case 0b000001: output.result = 0; break;
+				default: output.error = 'error->'+adcLv; output.status = false; break;
+		};
+		return output;
+	}
+	function askSensors(sensorName) {
+	  var xhttp = new XMLHttpRequest();
+	  xhttp.onreadystatechange = function() {  if (this.readyState == 4 && this.status == 200) {
+				let ctrlDot = pulsingDot;
+
+	  		let row = JSON.parse(this.responseText);
+	  		let output = codeToHeight(row.data.data );
+
+	  		if(output.status) console.log(output.result); else console.log(output.error);
+	  		if(output.status && output.result > 2.5) ctrlDot.render = renderRed;
+	  		else ctrlDot.render = renderGreen;
+	  	}   
+	  };
+	  xhttp.open("GET", `get?sensor=${sensorName}&last=1`, true);
+	  xhttp.send();
+	}
+	askSensors('tdz1');
+	setInterval(askSensors,2000,'tdz1');
+	//============================end========================================
+	/* Recycle code
+	//    var el = document.createElement('div');
+	//    el.className = 'marker-outer';
+	//    el.innerHTML = "<div class=marker></div>";
+	    //Credit to: https://stackoverflow.com/questions/10585029/parse-an-html-string-with-js
+	   
+	//    var tempMarker = new mapboxgl.Marker(el).setLngLat([lng,lat]).addTo(map);
+	//    var popup = new mapboxgl.Popup({ offset: 25, closeOnClick:false }).setText('Noi Bai.').setLngLat([lng,lat]);
+	//    tempMarker.setPopup(popup);
+	*/
+	</script>
+  </body>
+</html>

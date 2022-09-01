@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dashboard</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	
+	<!-------- Firebase and login checking go here ---------->
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+
+	<!-- Add SDKs for Firebase products that you want to use
+	     https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-analytics.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+
+	<!-- firebase authentication -->
+	<script src="https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth__vi.js"></script>
+	<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth.css" />
+
+	<script src="lib/common/logScript.js"></script>
+	<script src="lib/firebaseScript.js"></script>
+	<script src="lib/firestoreScript.js"></script>
+	<!-------- Fonts go here ---------->
+	<!--Import Google Icon Font-->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Awesome Font -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-------------------------------------------------->
+	<!-------- CSS goes here ---------->
+	<!-- Compiled and minified MaterializeCSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<!-- Firebase CSS -->
+	<link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.5.1/firebase-ui-auth.css" />
+	<!-- W3 CSS -->
+	<!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">  -->
+	<!-- <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-green.css"> -->
+
+
+  <link rel="stylesheet" type="text/css" href="lib/ui/w3.css">
+  <link rel="stylesheet" type="text/css" href="lib/ui/w3-theme-dark-grey.css">
+  <link rel="stylesheet" type="text/css" href="lib/ui/lds-spinner.css">
+  <link rel="stylesheet" type="text/css" href="lib/ui/page-overlay.css">
+  <link rel="stylesheet" type="text/css" href="lib/ui/custom.css">
+	
+	<style type="text/css" description="specific-custom">
+
+		@media screen and (max-width: 600px) {.show600px {display: none;}}
+		@media screen and (min-width: 1000px) {.show600px {max-width: 100px}}
+
+		@media screen and (max-width: 1000px) {.txLarge{font-size: 18px}.txSmall{font-size: 11px}.txxLarge{font-size: 22px}}
+		@media screen and (max-width: 800px) {.txLarge{font-size: 15px}.txSmall{font-size: 10px}.txxLarge{font-size: 20px}}
+		@media screen and (max-width: 700px) {.txLarge{font-size: 12px}.txSmall{font-size: 9px}.txxLarge{font-size: 20px}}
+		@media screen and (max-width: 600px) {.txLarge{font-size: 18px}.txSmall{font-size: 12px}.txxLarge{font-size: 18px}}
+		@media screen and (max-width: 440px) {.txLarge{font-size: 15px}.txSmall{font-size: 10px}.txxLarge{font-size: 16px}}
+		@media screen and (max-width: 350px) {.txLarge{font-size: 12px}.txSmall{font-size: 9px}}
+		@media screen and (max-width: 280px) {.txxLarge{font-size: 14px}}
+
+		input.searchDark{color: #fff;}
+
+		.sthoanthanh{background-color: #109618; color: #fff; opacity: 0.75}
+		.stTen{background-color: #109618; color: #fff; opacity: 0.75}
+		.stChoduyetHoanthanh{background-color: #02a99a; color: #fff; opacity: 0.9}
+		.stChoduyetTamdung{background-color: #f5c043; color: #000; opacity: 0.9}
+		.stTuchoiYeucau{background-color: #e91b86; color: #fff; opacity: 0.75}
+		.stHoanthanh{background-color: #3366cc; color: #fff; opacity: 0.75}
+		.stQuahan{background-color: #dc3912; color: #fff; opacity: 0.75}
+		.stKetthuc{background-color: #855e58; color: #fff; opacity: 0.75}
+		.stHethan{background-color: #dc3912; color: #fff; opacity: 0.75}
+		.stTamdung{background-color: #ff9900; color: #000; opacity: 0.75}
+		.stMoi{background-color: #0099c6; color: #fff; opacity: 0.75}
+		.stBatdau{background-color: #6e8a42; color: #fff; opacity: 0.75}
+	
+		#idSidebar{background-color: #252a2d; color: #797a7b; width: 25%}
+		#idSidebarSearch{background-color: #202527; color: #fff; width: 100%}
+		#idSidebarUserPanel{background-color: #202527; width: 100%}
+		@media screen and (max-width: 1267px) {#idSidebar {width: 30%}}
+		@media screen and (max-width: 1065px) {#idSidebar {width: 40%}}
+		@media screen and (max-width: 800px) {#idSidebar {width: 50%}}
+		@media screen and (max-width: 636px) {#idSidebar {width: 70%}}
+		@media screen and (max-width: 431px) {#idSidebar {width: 80%}}
+		
+		.cyanBg h1{color: white}
+		.cyanBg th{color: white}
+		.cyanBg button{color: white}
+
+		.inf-table tbody tr td{padding: 4px 2px;}
+
+		p{margin: 2px 0px}
+		h3{font-weight: bold;}
+		hr{margin: 5px}
+
+		label{color: black}
+		label.txWhite{color: white}
+
+		input[type="file"] {
+		    display: none;
+		}
+		.customFileUpload{border: 1px solid #ccc;display: inline-block;padding: 6px 12px;cursor: pointer;}
+		.flexFileUploadContainer{display: flex;flex-wrap: wrap; background-color: #e9d8f4;justify-content: space-evenly; align-items: baseline;}
+		.flexFileUploadContainer > div {  background-color: #58257b; margin: 10px;text-align: center;line-height: 15px;}
+
+		.customFileUploadSmall{border: 1px solid #ccc;display: inline-block;padding: 1px 10px;cursor: pointer;}
+		.flexFileUploadContainerSmall{display: flex;flex-wrap: wrap; background-color: #e9d8f4;justify-content: space-evenly; align-items: baseline;}
+		.flexFileUploadContainerSmall > div {  background-color: #58257b; margin: 10px;text-align: center;line-height: 15px;}
+
+		/*Credit to: https://stackoverflow.com/questions/40400094/set-a-close-icon-in-the-top-right-corner-of-an-image*/
+		.frameThumbnail{display: inline-block;position: relative;}
+		.closeOnTopThumbnail{position: absolute;top: -8px;right: -10px;}
+
+		.customFileItem{cursor: pointer;}
+		.flexThumbnailContainer{display: flex;flex-wrap: wrap;background-color: #e9d8f4;justify-content: flex-start;align-items: baseline;}
+		.flexThumbnailContainer > div {  background-color: #e9d8f4;width:80px;margin: 20px; text-align: center; }
+		/*background-color: #e9d8f4;*/
+
+		.flexThumbnailContainerSmall {display: flex;flex-wrap: wrap;background-color: #e9d8f4;justify-content: flex-start;align-items: baseline;}
+		.flexThumbnailContainerSmall > div {  background-color: #e9d8f4;width:80px;margin: 10px; text-align: center; }
+
+		.flexPreviewContainer{display: flex;flex-wrap: wrap;justify-content: flex-start;align-items: baseline;}
+		.flexPreviewContainer > div {  width:80px;margin: 20px; text-align: center; }
+	</style>
+	
+</head>
+<body class="fullh" onresize="">
+	
+	<!-- loadingOverlay -->
+	<div class="w3-overlay w3-display-container ptr" onclick="logF(overlayHiddenOnly)" id="idOverlay">
+		<div class="lds-spinner w3-display-middle" id="idOverlaySpinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+		<div class="w3-card-4 w3-display-middle w3-white hidden zlv2" id="idOverlayPanel" style="width: 350px; height: 400px;">
+			<div class="w3-bar"><h3 class="w3-bar-item">Cài đặt</h3><h5 class="w3-right w3-bar-item" onclick="logF(overlayHiddenAll)">&times;</h5></div>
+			<div class="w3-bar w3-row"><p class="w3-bar-item w3-col s6">Fast Mode</p>
+				<div class="switch w3-col s6 w3-bar-item"> <label> Tắt <input type="checkbox" onchange="onCboxChange({elm:this})"> <span class="lever"></span> Bật </label> </div><!-- Switch -->
+			</div>
+		</div>
+	</div>
+
+	<script description="loadingOverlay">
+		var obOverlay = {},elmObNames=['e','spinner','panel'];initOverlay=()=>{initElm(obOverlay,elmObNames,['idOverlay','idOverlaySpinner','idOverlayPanel']);}
+		overlayCtr=(val,vIdx)=>obOverlay[elmObNames[vIdx]+'s'].display=(val==1)?'block':'none';
+		overlayShowSpinner=()=>{[1,1,0].forEach(overlayCtr);} 
+		overlayShowPanel=()=>{[1,0,1].forEach(overlayCtr)}
+		overlayHiddenAll=()=>{[0,0,0].forEach(overlayCtr);}
+		overlayHiddenOnly=(e)=>{e=e||window.event;var target=e.target||e.srcElement; logE(target);if(target.id!='idOverlay') return false; else overlayHiddenAll();}
+
+		onCboxChange=(p)=>{mainData.settings.fastMode=(p.elm.checked);elmLoop(document,'classFastMode',e=>{e.value=p.elm.checked?mainData.user.hoten:'';e.disabled=p.elm.checked;});}
+	</script>
+
+	<!-- full page detail overlay -->
+	<div id="idDetailPanel" class="page-overlay zlv4">
+		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+		<div class="page-overlay-content w3-row mb40p">
+			<!-- page-overlay content goes here - detailControl.js -->
+			
+		</div>
+	</div>
+	<script>
+		function openNav(itemType, idx) {document.getElementById("idDetailPanel").style.height = "100%";setContent(itemType,itemType=='Course'?mainData.courseList[idx]:mainData.hocvienList[idx]);togglePrintOn(itemType);}
+		function closeNav() {document.getElementById("idDetailPanel").style.height = "0%";release();togglePrintOff();}
+	</script>
+	<script src="lib/ui/detailControl.js"></script>
+
+	<!-- Sidebar -->
+	<div class="w3-sidebar w3-bar-block w3-animate-left hidden w3-display-container " id="idSidebar">
+		<div class="w3-xlarge w3-container w3-row" id="idSidebarSearch">
+			<div class="w3-col" style="width:25px"><i class="fa fa-search w3-large"></i></div>
+			<div class="w3-rest"><input type="text" onkeyup="logF(sidebarSearch,{elm:this})" placeholder="Tìm tiêu chí lọc kết quả" class="w3-input w3-border-0 searchDark"></div>
+		</div>
+		<div class="overYAuto" id="idSidebarContent" >
+			<div class="w3-bar-item sidebarGroup txBold" style="padding: 5px 8px;color: #656768" onclick="logF(sidebarGroupToggle,{g:0})" >
+				<div class="w3-col" style="width:15px;"><i class="fa fa-angle-right w3-large"></i></div>Test Group
+			</div>
+			<div class="hidden">
+				<b class="w3-bar-item w3-hover-theme" style="margin: 2px 0px;padding: 4px 10px;padding-left: 40px;color: #929495" onclick="logF(sidebarItemClick,{g:0,i:0})">TestItem1</b>
+				<b class="w3-bar-item w3-hover-theme" style="margin: 2px 0px;padding: 4px 10px;padding-left: 40px;color: #929495" onclick="logF(sidebarItemClick,{g:0,i:1})">TestItem2</b>
+				<b class="w3-bar-item w3-hover-theme" style="margin: 2px 0px;padding: 4px 10px;padding-left: 40px;color: #929495" onclick="logF(sidebarItemClick,{g:0,i:2})">TestItem3</b>
+			</div>
+		</div>
+
+		<!-- User Avatar And Information -->
+		<div class="w3-display-bottomleft  w3-text-white w3-row" id="idSidebarUserPanel">
+			<div class="w3-col s12 divider"></div>
+			<img id="idUserImg" class="show600px w3-col s3 w3-circle pad10p">
+			<div class="w3-col s9 w3-container txOnImg txBold pad10p" >
+				<a id="idUserName">------- ----------- --------</a><br>
+				<a id="idUserSubName">------- ----------- --------</a><br>
+				<a id="idSignedInEmail" class="w3-small">-----------</a><br>
+				<a id="idDonvi" class="w3-small subTx">-----------</a><br>
+			</div>  
+		</div>
+	</div>
+	<script src="lib/ui/overlaySidebar.js"></script>
+	
+	<!-- Float Action Button View, Update (show Modal on Desktop/Container On Mobile) -->
+	<div class="fixed-action-btn" id="floatActionBt">
+    <a class="btn-floating btn-large waves-effect waves-light red">
+      <i class="large material-icons" id="idFAB">remove_red_eye</i>
+    </a>
+    <ul>
+      <li><a class="btn-floating gray"><i class="material-icons" onclick="setFabMode(goToTop)">publish</i></a></li>
+      <li class="hidden" id="iconPrint"><a class="btn-floating green"><i class="material-icons" onclick="setFabMode(printModeOn)">print</i></a></li>
+      <li><a class="btn-floating cyan"><i class="material-icons" onclick="setFabMode(copyListMode,'content_copy')">content_copy</i></a></li>
+      <li><a class="btn-floating blue"><i class="material-icons" onclick="setFabMode(importModeOn,'upload_file')">upload_file</i></a></li>
+      <li><a class="btn-floating green"><i class="material-icons" onclick="setFabMode(exportModeOn,'archive')">archive</i></a></li>
+      <li><a class="btn-floating red"><i class="material-icons" onclick="setFabMode(deleteModeOn,'delete','red')">delete</i></a></li>
+      <li><a class="btn-floating blue"><i class="material-icons" onclick="setFabMode(editModeOn,'edit','blue')">edit</i></a></li>
+      <li><a class="btn-floating red"><i class="material-icons" onclick="setFabMode(viewModeOn,'remove_red_eye','red')">remove_red_eye</i></a></li>
+    </ul>
+    <input type="file" id="fileImportDB" class="hidden" onchange="importHocvienFile(event);" />
+  </div>
+
+  <script description="floatActionButton">
+  	var obFab = {};
+  	initFab=()=>{obFab.i=M.FloatingActionButton.init(document.querySelectorAll('.fixed-action-btn'), {hoverEnabled:false});
+  		initElm(obFab,['e'],['idFAB']); viewModeOn();
+  	}
+  	setFabMode=(mode,mIcon,color)=>{if(color){bgFAB(color);obFab.e.innerHTML=mIcon;} mode();}
+  	bgFAB=(color)=>{['red','green','blue','cyan'].map((cItem)=>{if(cItem!=color)obFab.ec.remove(cItem);});obFab.ec.add(color);}
+  	
+  	editModeOn=()=>{obFab.m='edit';tblReloadState();editSwitchInput(true);};
+  	viewModeOn=()=>{obFab.m='view';tblReloadState();editSwitchInput(false)};
+  	deleteModeOn=()=>{if(mainData.temp.list.length > 0) {if(confirm('Bạn có chắc muốn xóa Các mục này?\nChú ý: Không thể khôi phục sao khi xóa!!!!!')){
+  			mainData.db.massDeleteDB({type:mainData.temp.type},mainData.temp.list,()=>{logF(dataToMem);setTimeout(()=>{logF(updateListDulieu);},2000)});mainData.temp.list=[];setFabMode(viewModeOn,'remove_red_eye','red');
+  		}} else {obFab.m='delete';tblReloadState();editSwitchInput(false);}
+  	};
+
+  	printModeOn=()=>{ externalPrintingHocvien();}
+  	exportModeOn=()=>{ logE(mainData.view.list);exportHocvienData(mainData.view.list,'Hoc vien');}
+  	importModeOn=()=>{ document.getElementById('fileImportDB').click()}
+  	copyListMode=()=>{toClipboard(getHocvienCopied(mainData.view.list))}
+
+  	togglePrintOn=(itemType)=>document.getElementById('iconPrint').classList.toggle('hidden',itemType!='student');
+  	togglePrintOff=()=>document.getElementById('iconPrint').classList.toggle('hidden',true);
+
+	toClipboard=(text)=>{
+		// Credit to: https://stackoverflow.com/a/64178650
+		if (navigator.clipboard) { // default: modern asynchronous API
+			return navigator.clipboard.writeText(text);
+		} else if (window.clipboardData && window.clipboardData.setData) {     // for IE11
+			window.clipboardData.setData('Text', text);
+			return Promise.resolve();
+		} else {
+			// workaround: create dummy input
+			const input = h('input', { type: 'text' });input.value = text;
+			document.body.append(input);input.focus();input.select();document.execCommand('copy');input.remove();
+			return Promise.resolve();
+		}
+	}
+
+  	fabFuncsBasedItemChecked=(elm,itemType,idx)=>{
+  		 itemType=(itemType[0]=='C')?'course':itemType;
+  		switch(obFab.m){
+  			case 'edit': openNav(itemType,idx); elm.checked=''; break;
+  			case 'delete': 
+	  			if(confirm('Bạn có chắc muốn xóa mục này?\nChú ý: Không thể khôi phục sao khi xóa!!!!!')){ 
+	  				let item = (itemType=='student')?mainData.hocvienList[idx]:mainData.courseList[idx];
+	  				mainData.db.deleteDB({type:itemType,id:item.id.docId,action:'delete'},item).then();
+	  				logF(dataToMem);
+	  				logF(updateListDulieu);
+	  			} elm.checked=''; break;
+  			case 'view': 
+  				let item = (itemType=='student')?mainData.hocvienList[idx]:mainData.courseList[idx]; 
+  				if(elm.checked){
+  					// add to list
+  					mainData.temp.list.push(item);elm.savedIdx = mainData.temp.list.length-1;
+  					mainData.temp.type = itemType;
+  				}else{
+  					// remove from list
+  					mainData.temp.list.splice(elm.savedIdx);
+  				}
+  				break;//todo: save to list
+  			default: logE(null,'Lỗi trạng thái FAB!');
+  		}
+  	}
+  </script>
+
+  <div id="idMain">
+		<!-- Navigation bar -->
+	  <div class="w3-row w3-top">
+	    <div class="w3-row w3-theme txxLarge w3-col s12">
+	      <div class="w3-bar w3-col s12 w3-text-white">
+	        <a class="w3-bar-item w3-button w3-hover-theme" onclick="logF(onMenuClick)"><i class="fa fa-bars" id="idMenu"></i></a>
+	        <span class="w3-bar-item">Dashboard</span>  
+	        <a class="w3-right txSmall pad10p" href="" onclick="onSignOut();return false;">Đăng xuất</a>
+	        <a class="w3-bar-item w3-button w3-hover-theme w3-right" onclick="logF(overlayShowPanel);"><i class="fa fa-cog"></i></a>
+	      </div>
+	    </div>
+		</div>
+		<script description="Navigation">
+			var obMenuc=document.getElementById('idMenu').classList;
+			onMenuClick=()=>{logF(sidebarToggle);obMenuc.toggle('fa-bars');obMenuc.toggle('fa-times');}
+		</script>
+
+		<!-- Main content -->
+		<div id="idMainContainer" class="w3-row">
+			<div class="w3-xxlarge w3-col s12 w3-hide-small" id="dummyNavbar">.</div>
+			<div class="w3-xlarge w3-col s12 w3-hide-large w3-hide-medium" id="dummyNavbar">.</div>
+
+			<div id="idMainTieude" class="w3-col s12 w3-container mT20p mb10p">
+				<h2 class="w3-col s12 m6">Title: Chi tiết học viên</h2>
+				<div id="idSubSidebar" class="w3-right w3-col s12 m3 w3-container bot12p">
+					<div class="w3-card-2 w3-container " id="idMainSearch">
+						<div class="w3-col s12 w3-row w3-large">
+							<div class="w3-col" style="width:30px;margin-top: 10px"><i class="fa fa-search"></i></div>
+							<div class="w3-rest"><input type="text"  placeholder="Tìm kiếm.." onkeyup="logF(mainSearch,{elm:this})" onfocus="" class="w3-input w3-border-0"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="idMainDulieu" class="w3-col s12 bot12p w3-row"  style="padding-left: 8px; padding-right: 8px">
+
+
+ <!-- <button onclick="notify('me','Dashboard')">Notify me!</button> -->
+				<ul class="w3-col s12 collapsible" id="idMainList" style="margin: 0px">
+					<li id="idAddDulieuKhoahocList" class="hidden">
+						<div class="pLR15px collapsible-header" >
+							<p><div class="mplus"></div><b class="pR4px w3-text-theme"> Thêm Khóa học mới </b></p>
+						</div>
+						<div class="pLR15px collapsible-body m0px">
+							<form autocomplete="off" class="w3-row" name="idAddCourseForm" id="idAddCourseForm">
+								<div class="w3-col s12 m4 l3 w3-right">
+									<div class="w3-col s12 w3-container mb4p">
+										<div class="w3-col s12 flexThumbnailContainer"></div>
+										<div class="w3-col s12 fileUploadUI flexFileUploadContainer">
+											<div class="w3-col s12">
+												<!-- Credit to:https://www.flaticon.com/free-icon/file_3143360 -->
+												<label for="fileUploadCourseImg" class="customFileUpload fullw txWhite">
+													<img src="./icons/svg/3143/3143360.svg" width="20px" class="m5p">Đính kèm ảnh
+												</label>
+												<input type="file" id="fileUploadCourseImg" class="fileUploadInitOnce oneFileOnly" accept="image/*" />
+											</div>
+										</div>
+									</div>
+									
+								</div>
+
+								<div class="w3-col s12 m8 l9">
+									<div class="w3-col s12 m8 w3-container">
+										<label for="idMaKhoahoc">Mã Khóa Học</label><input type="text" name="idMaKhoahoc">
+									</div>
+									<div class="w3-col s12 w3-container">
+										<label for="idTenKhoahoc">Tên Khóa Học</label><input type="text" name="idTenKhoahoc">	
+									</div>
+								</div>
+								
+								<div class="w3-cell-row">
+									<div class="w3-cell w3-center" ><button class="w3-button w3-blue w97" type="button" onclick="logF(onItemCourseGetUI,{elm:this,index:-1})">Thêm Khóa học</button></div>
+								</div>
+							</form>
+						</div>
+					</li>
+					<li id="idAddDulieuList" class="hidden">
+						<div class="pLR15px collapsible-header" >
+							<p><div class="mplus"></div><b class="pR4px w3-text-theme"> Thêm Học viên mới </b></p>
+						</div>
+						<div class="pLR15px collapsible-body m0px">
+							<form autocomplete="off" class="w3-row" name="idAddForm" id="idAddForm">
+								<div class="w3-col s12 m4 l3 w3-right">
+									<div class="w3-col s12 w3-container mb4p">
+										<div class="w3-col s12 flexThumbnailContainer"></div>
+										<div class="w3-col s12 fileUploadUI flexFileUploadContainer">
+											<div class="w3-col s12">
+												<!-- Credit to:https://www.flaticon.com/free-icon/file_3143360 -->
+												<label for="fileUploadCharImg" class="customFileUpload fullw txWhite">
+													<img src="./icons/svg/3143/3143360.svg" width="20px" class="m5p">Đính kèm ảnh Thẻ
+												</label>
+												<input type="file" id="fileUploadCharImg" class="fileUploadInitOnce oneFileOnly" accept="image/*" />
+											</div>
+										</div>
+									</div>
+									
+								</div>
+								
+								<div class="w3-col s12 m8 l9">
+									<div class="w3-col s12 m6 l4 mb20p">
+										<div class="w3-border w3-border-green w3-round-small w95">
+											<div class=" w3-container">
+												<label for="idMaAcv">Mã ACV</label><input type="text" name="idMaAcv" class="classMaAcv">
+											</div>
+											<div class=" w3-container">
+												<label for="idHoten">Họ và tên</label><input type="text" name="idHoten" disabled>
+											</div>
+											<div class=" w3-container">
+												<label for="idChucdanh">Chức danh</label><input type="text" name="idChucdanh" disabled>
+											</div>
+											<div class=" w3-container">
+												<label for="idDonvi">Đơn vị</label><input type="text" name="idDonvi" disabled>
+											</div>
+										</div>
+									</div>
+									<div class="w3-col s12 m6 l4 mb20p">
+										<div class="w3-border w3-border-green w3-round-small w95">
+											<div class=" w3-container">
+												<label for="idVitriCongtac">Vị trí công tác</label><input type="text" name="idVitriCongtac" placeholder="Ví dụ: ANS/ALS">
+											</div>
+											<div class=" w3-container">
+												<label for="idSoHoso">Số hồ sơ</label><input type="text" name="idSoHoso" placeholder="Ví dụ: 015141/2019">
+											</div>
+										</div>
+									</div>
+
+									<div id="nangdinhContainer">
+
+									</div>
+
+									<div class="w3-col s12 m6 l4 w3-container mb20p" >
+										<button class="w3-theme fullw w3-button" onclick="return onAddNangDinh('nangdinhContainer');">Thêm năng định</button>
+									</div>
+								</div>
+								
+								<div class="w3-cell-row">
+									<div class="w3-cell w3-center" ><button class="w3-button w3-blue w97" type="button" onclick="logF(onItemGetUI,{elm:this,index:-1})">Thêm học viên</button></div>
+								</div>
+							</form>
+						</div>
+					</li>
+					<!-- CongviecItem--see CongviecItem for more detail -->
+					
+				</ul>
+			</div>
+			<script src="lib/ui/listControl.js"></script>
+		</div>
+	</div>
+	<!-- Recheck! Credit to: https://coderwall.com/p/mekopw/jsonc-compress-your-json-data-up-to-80 -->
+	<script src="lib/utils/JSONC.js"></script>
+
+
+	<script src="lib/ui/uiStandalone.js"></script>
+	<script src="lib/ui/formMainCtrl.js"></script>
+	<script src="lib/ui/mainUI.js"></script>
+	
+	<script src="lib/data/dataProcessScript.js"></script>
+	<script src="lib/data/dataPrototypeScript.js"></script>
+ 
+	<script>
+	    function exportHTML(){
+	       var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
+	            "xmlns:w='urn:schemas-microsoft-com:office:word' "+
+	            "xmlns='http://www.w3.org/TR/REC-html40'>"+
+	            "<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
+	       var footer = "</body></html>";
+	       var sourceHTML = header+document.getElementById("idDetailPanel").innerHTML+footer;
+	       
+	       var source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+	       var fileDownload = document.createElement("a");
+	       document.body.appendChild(fileDownload);
+	       fileDownload.href = source;
+	       fileDownload.download = 'document.doc';
+	       fileDownload.click();
+	       document.body.removeChild(fileDownload);
+	    }
+	</script>
+
+  <script src="lib/utils/xlsx.full.min.js"></script>
+  <!-- Google Chart API -->
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <!-- jsPDF https://github.com/MrRio/jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js"></script>
+
+	<!-- Compiled and minified Material -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <!-- GasAPI -->
+  <script src="lib/api/GasApi.js"></script>
+  <!-- CustomScript -->
+  <script src="lib/common/libScript.js"></script>
+  <script src="lib/testScript.js"></script>
+
+  <script src="lib/api/upload/googleDriveScript.js"></script>
+  <script src="lib/api/upload/uploadFile-js.js"></script>
+  <script description="googleDriveScript">
+  	const fSizeLimit = 30*1024*1024;
+  </script>
+  
+  <script src="lib/ui/autocomplete-js.js"></script>
+  <script src="lib/ui/notification.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/ui/autocomplete-css.css">
+  <script src="lib/autocompleteScript.js"></script>
+  
+  <script src="lib/initScript.js"></script>
+
+</body>
+</html>

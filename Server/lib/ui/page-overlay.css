@@ -1,0 +1,47 @@
+
+.page-overlay {
+  height: 0%;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #FFFF;
+  overflow-y: hidden;
+  transition: 0.5s;
+  overflow-y: auto;
+}
+
+.page-overlay-content {
+  position: relative;
+  top: 2%;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.page-overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.page-overlay a:hover, .page-overlay a:focus {
+  color: #f1f1f1;
+}
+
+.page-overlay .closebtn {
+  position: absolute;
+  top: 7px;
+  right: 15px;
+  font-size: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  .page-overlay .closebtn {
+  font-size: 20px;
+  top: 5px;
+  right: 10px;
+  }
+}
