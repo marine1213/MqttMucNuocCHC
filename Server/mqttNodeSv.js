@@ -1,5 +1,5 @@
 var mqtt    = require('mqtt');
-var client  = mqtt.connect("mqtt:  //broker.mqttdashboard.com",{clientId:"mqttjsSv"});
+var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttjsSv"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
 
 var mainData = {sensor:{}, debug:{}}, cache = {sensor:{},last:{}};
