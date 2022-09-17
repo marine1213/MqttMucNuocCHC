@@ -1,0 +1,40 @@
+/*all view is nearly fullscreen*/
+.viewScreen{
+	height:90vh;
+}
+
+/*center the text on the screen*/
+#homediv{
+  -ms-transform: translateY(35%);
+  transform: translateY(35%);
+}
+
+
+@media only screen and (max-width: 600px) {
+  .viewScreen{
+    height:90vh;
+
+  }
+  #homediv{
+    -ms-transform: translateY(2%);
+    transform: translateY(2%);
+  }
+}
+
+.blinking {
+    animation: 1s blink ease infinite;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%
+}
+
+
+@-webkit-keyframes "blink" {
+  from, to {
+    opacity: 0;
+    background-color: green;
+  }
+  50% {
+    opacity: 1;
+  }
+}

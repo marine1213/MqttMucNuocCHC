@@ -9,11 +9,17 @@
 	<p>Data: <a href="#" id="sensorData"></a></p>
 	<script type="text/javascript">
 		function loadXMLDoc() {
-			const sensorName = 'tdz1';
+			const sensorName = 'TDZ11L';
 		  var xhttp = new XMLHttpRequest();
 		  xhttp.onreadystatechange = function() {  if (this.readyState == 4 && this.status == 200) {
 		  		document.getElementById("sensorName").innerHTML = sensorName;
-		  		document.getElementById('sensorData').innerHTML = JSON.parse(this.responseText).reduce((out,row)=>{out+=`<br>Time:${new Date(row.timestamp).getTime()}--${JSON.stringify(row)}`;return out;},''); 
+		  		try{
+
+			  		document.getElementById('sensorData').innerHTML = JSON.parse(this.responseText).reduce((out,row)=>{out+=`<br>Time:${new Date(row.timestamp).getTime()}--${JSON.stringify(row)}`;return out;},''); 
+			  	}catch(e){
+			  		console.log(e);
+			  		console.log('Resp:'+this.responseText);
+			  	}
 		  	}   
 		  };
 		  xhttp.open("GET", "get?sensor="+sensorName, true);

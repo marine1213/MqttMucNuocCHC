@@ -2,34 +2,35 @@ var mqtt    = require('mqtt');
 var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttjsSv"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
 
-var mainData = {sensor:{}, debug:{}}, cache = {sensor:{},last:{}};
+var mainData = {sensor:{}, debug:{},delay:{},pingTime:0}, cache = {sensor:{},last:{}};
 var inArgs = process.argv.slice(2);
 var isDebug = inArgs[0] == '-d';
 
 client.on("connect",function(){	console.log("connected  "+client.connected); onConnect();})
-client.on("error",function(error){console.log("Can't connect" + error);process.exit(1)});
+client.on("error",function(error){console.log("Can't connect:" + error);});
 
 client.on('message',function(topic, message, packet){
   if(topic.includes('data')) onData(topic, message, packet);
   if(topic.includes('debug')) onDebug(topic, message, packet);
-  if(isDebug)
-	  console.log("Topic="+ topic+"==> message is: "+ message);
+  if(topic.includes('pingRep')) onPing(topic, message, packet);
+  if(isDebug)   console.log("Topic="+ topic+"==> message is: "+ message);
 });
 
-function publish(topic,msg,options){
+publish = (topic,msg,options)=>{  if (client.connected == true){ client.publish(topic,msg,options); } else console.log('Client is not connected!')      }
 	// console.log("===> publishing",msg);
 
-	if (client.connected == true){
-		client.publish(topic,msg,options);
-	}
-}
+var topic=["apx/waterlv/noibai/tdz11l/data", 'apx/waterlv/noibai/tdz11l/ctrl','apx/waterlv/noibai/tdz11l/debug','apx/waterlv/noibai/tdz11l/pingAsk','apx/waterlv/noibai/tdz11l/pingRep'];
 
-onConnect = () => {var topic=["apx/waterlv/noibai/tdz1/data", 'apx/waterlv/noibai/tdz1/ctrl','apx/waterlv/noibai/tdz1/debug'];client.subscribe('apx/waterlv/noibai/tdz1/#',{qos:1}); }
+onConnect = () => {client.subscribe('apx/waterlv/noibai/tdz11l/#',{qos:1}); }
+
 onData = (topic, message, packet) => {
   let jsMess = ""; try{ jsMess = JSON.parse(message.toString());}catch(e){ console.log(message);console.log(message.toString());console.log(e); return;} mainData.sensor[jsMess.name]=mainData.sensor[jsMess.name]?mainData.sensor[jsMess.name]:[]; 
   let lastVal = {timestamp:(new Date()).toString(),data:(jsMess.vals)}; mainData.sensor[jsMess.name].push(lastVal); cache.last[jsMess.name] = JSON.stringify(lastVal);
   if(mainData.sensor[jsMess.name].length > 200) mainData.sensor[jsMess.name].shift(); cache.sensor[jsMess.name]=JSON.stringify(mainData.sensor[jsMess.name]);}//console.log(JSON.stringify(message.toString()));
+
 onDebug = (topic, message, packet) => {let nowStr = new Date(); mainData.debug[nowStr.getTime()] = message.toString()+' at '+nowStr.toString()}
+
+onPing = (topic, message, packet) => {let nowStr = new Date(); let splMessage=message.toString().split(':'); if(splMessage[0]=='ping'&&mainData.pingTime>0) mainData.delay[splMessage[1]]=nowStr-mainData.pingTime;}
 
 getSensorData = (sensorName,isLast) => {return isLast?(cache.sensor[sensorName]?cache.last[sensorName]:''):(cache.sensor[sensorName]?cache.sensor[sensorName]:'');}
 
@@ -38,12 +39,18 @@ getServerData = (param) => {
     case 'mainData': return JSON.stringify(mainData);
     case 'mainData.sensor': return JSON.stringify(mainData.sensor);
     case 'mainData.debug': return JSON.stringify(mainData.debug);
+    case 'mainData.delay': return JSON.stringify(mainData.delay);
     case 'cache': return JSON.stringify(cache);
     case 'servers': return JSON.stringify(servers);
     case 'configs': return JSON.stringify(configs);
+    default: return('param not found!')
   }
 }
 
+ping = () => { mainData.pingTime = new Date().getTime(); publish(topic[3],"PING:ABCDEFG"); console.log("ping"); }
+
+setInterval(ping, 2000);
+// ping();
 //==============================================
 var configs = {http:{}};
 var servers = [], s = null;
@@ -51,8 +58,9 @@ var servers = [], s = null;
 var http = require('http');
 var url = require('url');
 
-configs.http.map = {port:9000};
 configs.http.debug = {port:9009};
+configs.http.map = {port:9008};
+configs.http.dashboard = {port:9000};
 
 var responseList = {
   debug: (req, res) => {
@@ -77,6 +85,7 @@ var responseList = {
     var q = url.parse(req.url, true);
     switch(q.pathname){
       case '/': return responseHTML('dashboard.html',res);
+      case '/get': return responseText(getSensorData(q.query.sensor,q.query.last),res,q.query.auto);
     }
     return responseHTML("." + q.pathname,res); // neu co tham so thi chay ham va tra ve ketqua
   }

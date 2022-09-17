@@ -9,10 +9,12 @@ IPAddress ip(192,168,137 ,199);         //Fall back IP address
 // Make sure to leave out the http and slashes!
 const char* server = "broker.hivemq.com"; //"192.168.137.1";
 
-const char* sensorName = "tdz1";
-const char* debugTopic = "apx/waterlv/noibai/tdz1/debug";
-const char* ctrlTopic = "apx/waterlv/noibai/tdz1/ctrl";
-const char* dataTopic = "apx/waterlv/noibai/tdz1/data";
+const char* sensorName = "TDZ11L";
+const char* debugTopic = "apx/waterlv/noibai/tdz11l/debug";
+const char* ctrlTopic = "apx/waterlv/noibai/tdz11l/ctrl";
+const char* dataTopic = "apx/waterlv/noibai/tdz11l/data";
+const char* pingAskTopic = "apx/waterlv/noibai/tdz11l/pingAsk";
+const char* pingRepTopic = "apx/waterlv/noibai/tdz11l/pingRep";
 
 char sUart[7] = {"\0"};
  
@@ -73,7 +75,7 @@ void loop() {
             mqttConnect();
         }
       }
-      if(countMillis > 18000){
+      if(countMillis > 150){
         countMillis = 0;
         checkIP();
     }
@@ -86,6 +88,7 @@ void mqttConnect(){
          
         // Ensure that we are subscribed to the topic "MakerIOTopic"
         mqttClient.subscribe(ctrlTopic);
+        mqttClient.subscribe(pingAskTopic);
         
         // Establish the subscribe event
         mqttClient.setCallback(subscribeReceive);
@@ -123,10 +126,16 @@ void checkIP(){
 
 void subscribeReceive(char* topic, byte* payload, unsigned int length)
 {
+  String strPingTopic = String(pingAskTopic);
+  String strTopic = String(topic);
   // Print the topic
-   String tr = String("Topic:")+String(topic);
-   mqttClient.publish(debugTopic, tr.c_str());
-   mqttClient.publish(debugTopic, (String("==> Message:")).c_str());
+  if(strPingTopic.equals(strTopic)){
+    String output = "ping:" + String(sensorName);
+    mqttClient.publish(pingRepTopic, output.c_str());
+  }else{
+    String tr = String("Topic:")+String(topic);
+    mqttClient.publish(debugTopic, tr.c_str());
+  }
 }
 
 void serialFlush(){ while(Serial.available() > 0) {Serial.read();} }
