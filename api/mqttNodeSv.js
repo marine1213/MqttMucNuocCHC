@@ -1,6 +1,8 @@
 var mqtt    = require('mqtt');
 var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttjsSv"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
+// var client  = mqtt.connect("mqtt://192.168.0.222");
+// var client  = mqtt.connect("mqtt://127.0.0.1");
 
 var mainData = {sensor:{}, debug:{},delay:{},pingTime:0}, cache = {sensor:{},last:{}};
 var inArgs = process.argv.slice(2);
@@ -33,6 +35,7 @@ onDebug = (topic, message, packet) => {let nowStr = new Date(); mainData.debug[n
 onPing = (topic, message, packet) => {let nowStr = new Date(); let splMessage=message.toString().split(':'); if(splMessage[0]=='ping'&&mainData.pingTime>0) mainData.delay[splMessage[1]]=nowStr-mainData.pingTime;}
 
 getSensorData = (sensorName,isLast) => {return isLast?(cache.sensor[sensorName]?cache.last[sensorName]:''):(cache.sensor[sensorName]?cache.sensor[sensorName]:'');}
+getAllSensors = () => JSON.stringify(Object.keys(cache.sensor).reduce((out,sensorName)=>{out[sensorName]=cache.last[sensorName]; return out; }, {}));
 
 getServerData = (param) => {
   switch(param){
@@ -47,7 +50,7 @@ getServerData = (param) => {
   }
 }
 
-ping = () => { mainData.pingTime = new Date().getTime(); publish(topic[3],"PING:ABCDEFG"); console.log("ping"); }
+ping = () => { mainData.pingTime = new Date().getTime(); publish(topic[3],"PING:ABCDEFG"); if(isDebug) console.log("ping"); }
 
 setInterval(ping, 2000);
 // ping();
@@ -86,6 +89,8 @@ var responseList = {
     switch(q.pathname){
       case '/': return responseHTML('dashboard.html',res);
       case '/get': return responseText(getSensorData(q.query.sensor,q.query.last),res,q.query.auto);
+      case '/getDelay': return responseText(getServerData('mainData.delay'),res);
+      case '/getAllSensors': return responseText(getAllSensors(),res);
     }
     return responseHTML("." + q.pathname,res); // neu co tham so thi chay ham va tra ve ketqua
   }
