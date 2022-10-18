@@ -6,30 +6,10 @@
 
 const sensorList = ['TDZ11L','CTR11L29R','TDZ29R','TDZ11R','CTR11R29L','TDZ29L'];
 
-var uiOb = {
-	bars:{}
-};
 var uiData = {
 	delay:{},
 	rcrData:{},
 };
-
-// rcrName, rcrCode, indicator, sensorState
-loadUiElement=(elName, elmId, subElmId)=>{
-	if(!uiOb.bars[elmId]){ uiOb.bars[elmId]= {rcrStatus:null, rcrCode:null, indicator:null, sensorState:null}}
-	if(uiOb.bars[elmId][elName]){return uiOb.bars[elmId][elName];}
-
-	if(elName=='rcrCode')
-		if(elmId=='CTR11R29L')
-			 1==1;
-	let mainEl = document.getElementById(elmId);
-	return uiOb.bars[elmId][elName] = mainEl.getElementsByClassName(subElmId)[0];
-}
-
-getIndicatorElm=(htmlId)=>loadUiElement('indicator',htmlId,'idIndicator');
-getRcrNameElm=(htmlId)=>loadUiElement('rcrName',htmlId,'idRcrName');
-getRcrCodeElm=(htmlId)=>loadUiElement('rcrCode',htmlId,'idRcrCode');
-getSensorStateElm=(htmlId)=>loadUiElement('sensorState',htmlId,'idSensorState');
 
 heightToBarData=(height,rainSensor)=>{
 	switch(height){
@@ -50,18 +30,6 @@ heightToBarData=(height,rainSensor)=>{
 		case 0.5:return {indicator:'30.5vh',rcrStatus:'WET',rcrCode:5,rwStatusVN:'ƯỚT'}; break;
 		case 0:return rainSensor?{indicator:'31.8vh',rcrStatus:'WET',rcrCode:5,rwStatusVN:'ƯỚT'}:{indicator:'31.8vh',rcrStatus:'DRY',rcrCode:6,rwStatusVN:'KHÔ'}; break;
 		default: return null;
-	};
-}
-
-setBarData=(htmlId,height,rainSensor)=>{let ob=heightToBarData(height,rainSensor); 
-	getIndicatorElm(htmlId).style.top=ob.indicator;
-	getRcrNameElm(htmlId).innerHTML=ob.rcrStatus;
-	getRcrCodeElm(htmlId).innerHTML=ob.rcrCode;
-	return {
-		rcr:   					ob.rcrCode,
-		rwStatusVN:   	ob.rwStatusVN,
-		waterCoverage:  ob.rcrCode==6?'NR':100,
-		waterDepth: 		'NR',
 	};
 }
 
@@ -113,10 +81,8 @@ function askSensors(sensorName) {
 // askSensors('TDZ11L');
 // setInterval(askSensors,2000,'TDZ11L');
 
-//map the data following the order in sensorList
-reportMapping=()=>{
-
-}
+// Redefined in other JS which depends on which site uses the data
+forwardAskAllSensors=(sensorName,sensorCode)=>{}
 
 function askAllSensors() {
   let xhttp = new XMLHttpRequest();
@@ -126,14 +92,10 @@ function askAllSensors() {
 				sensorList.forEach((sensorName,idx)=>{
 					if(row[sensorName]) {	
 						let tempRow = JSON.parse(row[sensorName]);
-						let output = codeToHeight(tempRow.data.data);
-			  		let obData = setBarData(sensorName,output.height,output.rainSensor);
-			  		uiData.rcrData[sensorName] = obData;
+						forwardSensorFunction(sensorName,tempRow.data.data);
 					}else{
 		  			console.error(`${sensorName}: No Signal!`);
-		  			let output = codeToHeight(33);  //fake Values
-			  		let obData = setBarData(sensorName,output.height,output.rainSensor);
-			  		uiData.rcrData[sensorName] = obData;
+						forwardSensorFunction(sensorName,33);
 					}
 		  		// if(output.status) console.log(output.height); else console.log(output.error);
 				});
@@ -147,30 +109,14 @@ function askAllSensors() {
   xhttp.send();
 }
 
-askAllSensors();
-setInterval(askAllSensors,2000);
-
-setBarStateData=(htmlId)=>{
-	let classList =	getSensorStateElm(htmlId).classList;
-	while (classList.length > 0) classList.remove(classList.item(0));
-
-	let stateOb = {stateTx:'Running...',colorTx:'green'};
-
-	if(uiData.delay[htmlId]==undefined) stateOb = {stateTx:'No Signal!',colorTx:'grey'};
-	else { let val = parseInt(uiData.delay[htmlId]);
-		if(val > 500) stateOb = {stateTx:'High latency!',colorTx:'yellow'};
-		if(val > 1000) stateOb = {stateTx:'Too High latency!!!',colorTx:'red'};
-	}
-	getSensorStateElm(htmlId).innerHTML=stateOb.stateTx;
-	getSensorStateElm(htmlId).classList.add('w3-text-'+stateOb.colorTx);
-}
+forwardAskPing=(sensorName,delayValue)=>{}
 
 function askPing() {
 	let xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function(){if(this.readyState==4 && this.status==200){
 		try{
 			uiData.delay = JSON.parse(this.responseText); 
-			sensorList.forEach((sensorName)=>{setBarStateData(sensorName);});
+			sensorList.forEach((sensorName)=>{forwardAskPing(sensorName,uiData.delay[sensorName]);});
 		}catch(e){
 			console.log(e);
 		}
@@ -179,6 +125,3 @@ function askPing() {
 	xhttp.open("GET","getDelay",true);
 	xhttp.send();
 }
-
-askPing();
-setInterval(askPing,2000);

@@ -81,6 +81,8 @@ var responseList = {
     switch(q.pathname){
       case '/': return responseHTML('map.html',res);
       case '/get': return responseText(getSensorData(q.query.sensor,q.query.last),res,q.query.auto);
+      case '/getDelay': return responseText(getServerData('mainData.delay'),res);
+      case '/getAllSensors': return responseText(getAllSensors(),res);
     }
     return responseHTML("." + q.pathname,res); // neu co tham so thi chay ham va tra ve ketqua
   },
