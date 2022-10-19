@@ -95,7 +95,7 @@ function askAllSensors() {
 						forwardSensorFunction(sensorName,tempRow.data.data);
 					}else{
 		  			console.error(`${sensorName}: No Signal!`);
-						forwardSensorFunction(sensorName,33);
+						forwardSensorFunction(sensorName,33,'No signal!');
 					}
 		  		// if(output.status) console.log(output.height); else console.log(output.error);
 				});
