@@ -151,7 +151,11 @@ return publicData;
 }();
 
 	//============================================================
-	forwardSensorFunction=(sensorName,sensorCode)=>{
+	forwardSensorFunction=(sensorName,sensorCode,noSignal)=>{
+		if(noSignal){
+			console.error('No signal:'+sensorName);
+			return;
+		}
 		if(!mapPage.pulsingDotList){
 			console.error('PulsingDot is not initiated:'+sensorName);
 			return;
