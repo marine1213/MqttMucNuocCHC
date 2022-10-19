@@ -1,0 +1,5 @@
+Credit to: https://mosquitto.org/documentation/authentication-methods/
+mosquitto_passwd  -c pwrcr DoiThongTinNAOC
+Credit to: https://mosquitto.org/man/mosquitto-8.html
+mosquitto -p 1883 -v
+mosquitto -c configrcr.txt -v
