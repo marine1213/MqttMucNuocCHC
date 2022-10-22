@@ -24,7 +24,7 @@ publish = (topic,msg,options)=>{  if (client.connected == true){ client.publish(
 
 var topic=["apx/waterlv/noibai/tdz11l/data", 'apx/waterlv/noibai/tdz11l/ctrl','apx/waterlv/noibai/tdz11l/debug','apx/waterlv/noibai/tdz11l/pingAsk','apx/waterlv/noibai/tdz11l/pingRep'];
 
-onConnect = () => {client.subscribe('apx/waterlv/noibai/tdz11l/#',{qos:1}); }
+onConnect = () => {client.subscribe('apx/waterlv/noibai/#',{qos:1}); }
 
 onData = (topic, message, packet) => {
   let jsMess = ""; try{ jsMess = JSON.parse(message.toString());}catch(e){ console.log(message);console.log(message.toString());console.log(e); return;} mainData.sensor[jsMess.name]=mainData.sensor[jsMess.name]?mainData.sensor[jsMess.name]:[]; 
