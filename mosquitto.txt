@@ -1,0 +1,1 @@
+mosquitto_sub -h 172.16.222.60 -t apx/# -u cuong -P 123456

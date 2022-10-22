@@ -7,15 +7,15 @@ byte mac[] = {0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
 IPAddress ip(192,168,137 ,199);         //Fall back IP address
 
 // Make sure to leave out the http and slashes!
-//const char* server = "broker.hivemq.com"; //"192.168.137.1";
-const char* server = "172.16.222.60";  //172.16.222.60
+const char* server = "broker.hivemq.com"; //"192.168.137.1";
+const char* serverLocal = "172.16.222.60";  //172.16.222.60
 
-const char* sensorName = "TDZ11L";
-const char* debugTopic = "apx/waterlv/noibai/tdz11l/debug";
-const char* ctrlTopic = "apx/waterlv/noibai/tdz11l/ctrl";
-const char* dataTopic = "apx/waterlv/noibai/tdz11l/data";
-const char* pingAskTopic = "apx/waterlv/noibai/tdz11l/pingAsk";
-const char* pingRepTopic = "apx/waterlv/noibai/tdz11l/pingRep";
+const char* sensorName = "TDZ29R";
+const char* debugTopic = "apx/waterlv/noibai/tdz29r/debug";
+const char* ctrlTopic = "apx/waterlv/noibai/tdz29r/ctrl";
+const char* dataTopic = "apx/waterlv/noibai/tdz29r/data";
+const char* pingAskTopic = "apx/waterlv/noibai/tdz29r/pingAsk";
+const char* pingRepTopic = "apx/waterlv/noibai/tdz29r/pingRep";
 
 char sUart[7] = {"\0"};
  
@@ -23,6 +23,8 @@ char sUart[7] = {"\0"};
 EthernetClient ethClient;
 PubSubClient mqttClient(ethClient);
 
+EthernetClient ethClientLocal;
+PubSubClient mqttClientLocal(ethClientLocal);
 
 unsigned int countMillis = 0;
 unsigned int CONNECTION_STATE = 7;
@@ -47,9 +49,11 @@ void setup()
   ltoa(p,buf,10);
   
   mqttClient.setServer(server, 1883); 
+  mqttClientLocal.setServer(serverLocal, 1883); 
   
   // Attempt to connect to the server with the ID "tdz1"
   mqttConnect();
+  mqttConnectLocal();
 
   digitalWrite(CONNECTION_STATE, HIGH);
   
@@ -60,6 +64,7 @@ void setup()
 void loop() {
   // This is needed at the top of the loop!
   mqttClient.loop();
+  mqttClientLocal.loop();
   
   unsigned long currentMillis = millis();
 
@@ -75,8 +80,16 @@ void loop() {
         if(mqttClient.publish(dataTopic,buf)){
             mqttClient.publish(debugTopic, "Publish message success");
         }else{
+          Serial.println("Could not send message :(");
             mqttClient.publish(debugTopic, "Could not send message :(");
             mqttConnect();
+        }
+        if(mqttClientLocal.publish(dataTopic,buf)){
+            mqttClientLocal.publish(debugTopic, "Publish message success");
+        }else{
+          Serial.println("Could not send message :(");
+            mqttClientLocal.publish(debugTopic, "Could not send message :(");
+            mqttConnectLocal();
         }
       }
       if(countMillis > 150){
@@ -86,7 +99,7 @@ void loop() {
   }
 }
 void mqttConnect(){
-      if (mqttClient.connect(sensorName,"cuong","123456"))  
+      if (mqttClient.connect(sensorName,"mqttArduino","test"))  
       {
         mqttClient.publish(debugTopic, "Connection has been established, well done");
          
@@ -102,6 +115,23 @@ void mqttConnect(){
          mqttClient.publish(debugTopic, "Looks like the server connection failed...");
       }
 }
+void mqttConnectLocal(){
+      if (mqttClientLocal.connect(sensorName,"mqttArduino","arduino;"))  
+      {
+        mqttClientLocal.publish(debugTopic, "Connection has been established, well done");
+         
+        // Ensure that we are subscribed to the topic "MakerIOTopic"
+        mqttClientLocal.subscribe(ctrlTopic);
+        mqttClientLocal.subscribe(pingAskTopic);
+        
+        // Establish the subscribe event
+        mqttClientLocal.setCallback(subscribeReceiveLocal);
+      } 
+      else 
+      {
+         mqttClientLocal.publish(debugTopic, "Looks like the server connection failed...");
+      }
+}
 void checkIP(){
     byte t = 0;
     int  r = 0;
@@ -110,11 +140,13 @@ void checkIP(){
 
         String maintainRe = String("Maintain:")+t;
         mqttClient.publish(debugTopic, maintainRe.c_str());
+        mqttClientLocal.publish(debugTopic, maintainRe.c_str());
 
         r = Ethernet.begin(mac);              // start the Ethernet connection, connect to DHCP. 
 
         String beginRe = String("Begin:")+r;
         mqttClient.publish(debugTopic, beginRe.c_str());
+        mqttClientLocal.publish(debugTopic, beginRe.c_str());
 
         if (r == 0)      
         { 
@@ -124,6 +156,7 @@ void checkIP(){
         IPAddress IPaddr = Ethernet.localIP();
          String myLocalIP = String("My IP address is:")+String(IPaddr[0])+'.'+String(IPaddr[1])+'.'+String(IPaddr[2])+'.'+String(IPaddr[3]);
          mqttClient.publish(debugTopic, myLocalIP.c_str());
+         mqttClientLocal.publish(debugTopic, myLocalIP.c_str());
           Serial.println(myLocalIP);
       }while(r==0);
 } 
@@ -141,5 +174,17 @@ void subscribeReceive(char* topic, byte* payload, unsigned int length)
     mqttClient.publish(debugTopic, tr.c_str());
   }
 }
-
+void subscribeReceiveLocal(char* topic, byte* payload, unsigned int length)
+{
+  String strPingTopic = String(pingAskTopic);
+  String strTopic = String(topic);
+  // Print the topic
+  if(strPingTopic.equals(strTopic)){
+    String output = "ping:" + String(sensorName);
+    mqttClient.publish(pingRepTopic, output.c_str());
+  }else{
+    String tr = String("Topic:")+String(topic);
+    mqttClient.publish(debugTopic, tr.c_str());
+  }
+}
 void serialFlush(){ while(Serial.available() > 0) {Serial.read();} }
