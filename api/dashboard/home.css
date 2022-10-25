@@ -22,7 +22,7 @@
 }
 
 .blinking {
-    animation: 1s blink ease infinite;
+ animation: 1s blink ease infinite;
   width: 10px;
   height: 10px;
   border-radius: 100%

@@ -1,0 +1,123 @@
+.gauge {
+  width: 100%;
+  max-width: 70px;
+  height: 250px;
+  font-family: "Roboto", sans-serif;
+  font-size: 26px;
+  color: #004033;
+}
+
+.gauge__body {
+  width: 100%;
+  height: 100%;
+  background:  #f000;
+  position: relative;
+}
+
+.gauge__value {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /*background: #0ff;*/
+
+  /* Text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.gauge__valueTxContainer{
+  position: relative;
+} 
+
+.gauge__valueTx{
+  text-align: center;
+  color: #fff;
+} 
+
+.gauge__background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 100%;
+  background: #b4c0be;
+}
+
+.gauge__fill {
+  position: absolute;
+  width: 100%;
+  top: 80%;
+  height:  20%;
+  background: #4bf542;
+  transform-origin: center top;
+  transition: height 1s ease-out, top 1s ease-out;
+}
+
+.gauge__notify {
+  position: absolute;
+  width: 6%;
+  left: 204%;
+  height: 100%;
+}
+
+.gauge__alarm {
+  position: relative;
+  height: 61%;
+  background: #f00;
+}
+
+.gauge__warning {
+  position: relative;
+  height: 19%;
+  background: #ff0;
+}
+
+.gauge__normal {
+  position: relative;
+  height: 20%;
+  background: #4bf542;
+}
+
+.gauge__numbers {
+  position: absolute;
+  width: 100%;
+  left: 210%;
+  height: 100%;
+  font-size: 12px;
+}
+
+.gauge__masterLine {
+  position: relative;
+  width: 20%;
+  height: 5%;
+  margin: 0;
+}
+.gauge__masterLineBottom {
+  position: relative;
+  width: 20%;
+  height: 5%;
+  margin: 0;
+  top: 5%;
+}
+
+
+.gauge__subLine {
+  position: relative;
+  width: 10%;
+  height: 5%;
+}
+
+.gauge__hr{
+  margin: 0;
+  height: 0;
+  background-color: #fff;
+  border-color: #fff;
+}
+
+.gauge__tx{
+  left: 25%;
+  /*top: -20px;*/
+  transform: translate(18px, -7px);
+  color: #fff;
+}

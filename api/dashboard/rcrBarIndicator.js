@@ -3,26 +3,24 @@ var uiOb = {
 	bars:{}
 };
 
-// rcrName, rcrCode, indicator, sensorState
+// rcrName, rcrCode, gauge, sensorState
 loadUiElement=(elName, elmId, subElmId)=>{
-	if(!uiOb.bars[elmId]){ uiOb.bars[elmId]= {rcrStatus:null, rcrCode:null, indicator:null, sensorState:null}}
+	if(!uiOb.bars[elmId]){ uiOb.bars[elmId]= {rcrStatus:null, rcrCode:null, gauge:null, sensorState:null}}
 	if(uiOb.bars[elmId][elName]){return uiOb.bars[elmId][elName];}
 
-	if(elName=='rcrCode')
-		if(elmId=='CTR11R29L')
-			 1==1;
 	let mainEl = document.getElementById(elmId);
 	return uiOb.bars[elmId][elName] = mainEl.getElementsByClassName(subElmId)[0];
 }
 
-getIndicatorElm=(htmlId)=>loadUiElement('indicator',htmlId,'idIndicator');
+getGaugeElm=(htmlId)=>loadUiElement('gauge',htmlId,'gauge');
 getRcrNameElm=(htmlId)=>loadUiElement('rcrName',htmlId,'idRcrName');
 getRcrCodeElm=(htmlId)=>loadUiElement('rcrCode',htmlId,'idRcrCode');
 getSensorStateElm=(htmlId)=>loadUiElement('sensorState',htmlId,'idSensorState');
 
 
-setBarData=(htmlId,height,rainSensor)=>{let ob=heightToBarData(height,rainSensor); 
-	getIndicatorElm(htmlId).style.top=ob.indicator;
+setBarData=(htmlId,height,rainSensor,noSignal)=>{let ob=heightToBarData(height,rainSensor); 
+	gauge.setCode(getGaugeElm(htmlId),ob.rcrCode==6?-1:height);
+	if(noSignal) gauge.noSignal(getGaugeElm(htmlId));
 	getRcrNameElm(htmlId).innerHTML=ob.rcrStatus;
 	getRcrCodeElm(htmlId).innerHTML=ob.rcrCode;
 	return {
@@ -34,12 +32,12 @@ setBarData=(htmlId,height,rainSensor)=>{let ob=heightToBarData(height,rainSensor
 }
 
 //map the data following the order in sensorList
-setRcrUiData=(sensorName,sensorCode)=>{
+setRcrUiData=(sensorName,sensorCode,noSignal)=>{
 	let output = codeToHeight(sensorCode);  //fake Values
-	let obData = setBarData(sensorName,output.height,output.rainSensor);
+	let obData = setBarData(sensorName,output.height,output.rainSensor,noSignal);
 	uiData.rcrData[sensorName] = obData;
 }
-forwardSensorFunction=(sensorName,sensorCode)=>{setRcrUiData(sensorName,sensorCode)}
+forwardSensorFunction=(sensorName,sensorCode,noSignal)=>{setRcrUiData(sensorName,sensorCode,noSignal)}
 
 
 askAllSensors();
@@ -53,14 +51,11 @@ setBarStateData=(htmlId,delayValue)=>{
 	while (classList.length > 0) classList.remove(classList.item(0));
 
 	let stateOb = {stateTx:'Running...',colorTx:'green'};
-	let barIndicator = getIndicatorElm(htmlId);
-
 	if(delayValue==undefined) {
 		stateOb = {stateTx:'No Signal!',colorTx:'grey'};
-		barIndicator.style.display='none';
+		gauge.noSignal(getGaugeElm(htmlId));
 	}
 	else {
-		barIndicator.style.display='block';
 		let val = parseInt(delayValue);
 		if(val > 500) stateOb = {stateTx:'High latency!',colorTx:'yellow'};
 		if(val > 1000) stateOb = {stateTx:'Too High latency!!!',colorTx:'red'};

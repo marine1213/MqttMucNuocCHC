@@ -1,7 +1,7 @@
 var mqtt    = require('mqtt');
 var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttNodeSvNaocCN"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
-var client2  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
+// var client  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
 // var client  = mqtt.connect("mqtt://127.0.0.1");
 // var client  = mqtt.connect("mqtt://172.16.222.60");
 
@@ -22,7 +22,7 @@ client.on('message',function(topic, message, packet){
 publish = (topic,msg,options)=>{  if (client.connected == true){ client.publish(topic,msg,options); } else console.log('Client is not connected!')      }
 	// console.log("===> publishing",msg);
 
-var topic=["apx/waterlv/noibai/tdz11l/data", 'apx/waterlv/noibai/tdz11l/ctrl','apx/waterlv/noibai/tdz11l/debug','apx/waterlv/noibai/tdz11l/pingAsk','apx/waterlv/noibai/tdz11l/pingRep'];
+const topic=["apx/waterlv/noibai/tdz29r/data", 'apx/waterlv/noibai/tdz29r/ctrl','apx/waterlv/noibai/tdz29r/debug','apx/waterlv/noibai/tdz29r/pingAsk','apx/waterlv/noibai/tdz29r/pingRep'];
 
 onConnect = () => {client.subscribe('apx/waterlv/noibai/#',{qos:1}); }
 
@@ -33,7 +33,7 @@ onData = (topic, message, packet) => {
 
 onDebug = (topic, message, packet) => {let nowStr = new Date(); mainData.debug[nowStr.getTime()] = message.toString()+' at '+nowStr.toString()}
 
-onPing = (topic, message, packet) => {let nowStr = new Date(); let splMessage=message.toString().split(':'); if(splMessage[0]=='ping'&&mainData.pingTime>0) mainData.delay[splMessage[1]]=nowStr-mainData.pingTime;}
+onPing = (topic, message, packet) => {let nowStr = new Date(); let splMessage=message.toString().split(':'); if(/*splMessage[0]=='ping'&&*/mainData.pingTime>0) mainData.delay[/*splMessage[1]*/'TDZ29R']=nowStr-mainData.pingTime;}
 
 getSensorData = (sensorName,isLast) => {return isLast?(cache.sensor[sensorName]?cache.last[sensorName]:''):(cache.sensor[sensorName]?cache.sensor[sensorName]:'');}
 getAllSensors = () => JSON.stringify(Object.keys(cache.sensor).reduce((out,sensorName)=>{out[sensorName]=cache.last[sensorName]; return out; }, {}));
@@ -115,7 +115,16 @@ responseHTML=(pathname,res,autoRefresh)=>{
       res.writeHead(404, {'Content-Type': 'text/html'});
       return res.end("404 Not Found");
     } 
-    res.writeHead(200, autoRefresh?{'Content-Type': 'text/html','Connection': 'close','Refresh': '5'}:{'Content-Type': 'text/html'});
+
+    if(pathname.endsWith('.css'))
+      res.writeHead(200, {'Content-Type': 'text/css'});
+    else if(pathname.endsWith('.png'))
+      res.writeHead(200, {'Content-Type': 'image/png'});
+    else if(pathname.endsWith('.jpg'))
+      res.writeHead(200, {'Content-Type': 'image/jpg'});
+    else
+      res.writeHead(200, autoRefresh?{'Content-Type': 'text/html','Connection': 'close','Refresh': '5'}:{'Content-Type': 'text/html'});
+
     res.write(data);
     return res.end();
   });
