@@ -33,7 +33,7 @@ onData = (topic, message, packet) => {
 
 onDebug = (topic, message, packet) => {let nowStr = new Date(); mainData.debug[nowStr.getTime()] = message.toString()+' at '+nowStr.toString()}
 
-onPing = (topic, message, packet) => {let nowStr = new Date(); let splMessage=message.toString().split(':'); if(/*splMessage[0]=='ping'&&*/mainData.pingTime>0) mainData.delay[/*splMessage[1]*/'TDZ29R']=nowStr-mainData.pingTime;}
+onPing = (topic, message, packet) => {let nowStr = new Date(); let sensorName=topic.substring(topic.lastIndexOf('/')+1).toUpperCase(); if(mainData.pingTime>0) mainData.delay[sensorName]=nowStr-mainData.pingTime;}
 
 getSensorData = (sensorName,isLast) => {return isLast?(cache.sensor[sensorName]?cache.last[sensorName]:''):(cache.sensor[sensorName]?cache.sensor[sensorName]:'');}
 getAllSensors = () => JSON.stringify(Object.keys(cache.sensor).reduce((out,sensorName)=>{out[sensorName]=cache.last[sensorName]; return out; }, {}));
