@@ -1,7 +1,7 @@
 var mqtt    = require('mqtt');
-var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttNodeSvNaocCN"});
+// var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttNodeSvNaocCN"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
-// var client  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
+var client  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
 // var client  = mqtt.connect("mqtt://127.0.0.1");
 // var client  = mqtt.connect("mqtt://172.16.222.60");
 
@@ -22,7 +22,7 @@ client.on('message',function(topic, message, packet){
 publish = (topic,msg,options)=>{  if (client.connected == true){ client.publish(topic,msg,options); } else console.log('Client is not connected!')      }
 	// console.log("===> publishing",msg);
 
-const topic=["apx/waterlv/noibai/tdz29r/data", 'apx/waterlv/noibai/tdz29r/ctrl','apx/waterlv/noibai/tdz29r/debug','apx/waterlv/noibai/tdz29r/pingAsk','apx/waterlv/noibai/tdz29r/pingRep'];
+const topic=["apx/waterlv/noibai/data/tdz29r", 'apx/waterlv/noibai/ctrl/tdz29r','apx/waterlv/noibai/debug/tdz29r','apx/waterlv/noibai/pingAsk/tdz29r','apx/waterlv/noibai/pingRep/tdz29r'];
 
 onConnect = () => {client.subscribe('apx/waterlv/noibai/#',{qos:1}); }
 

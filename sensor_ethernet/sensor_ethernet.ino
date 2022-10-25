@@ -11,11 +11,11 @@ IPAddress ip(192,168,137 ,199);         //Fall back IP address
 const char* server = "172.16.222.60";  //172.16.222.60
 
 const char* sensorName = "TDZ11L";
-const char* debugTopic = "apx/waterlv/noibai/tdz11l/debug";
-const char* ctrlTopic = "apx/waterlv/noibai/tdz11l/ctrl";
-const char* dataTopic = "apx/waterlv/noibai/tdz11l/data";
-const char* pingAskTopic = "apx/waterlv/noibai/tdz11l/pingAsk";
-const char* pingRepTopic = "apx/waterlv/noibai/tdz11l/pingRep";
+const char* debugTopic = "apx/waterlv/noibai/debug/tdz11l";
+const char* ctrlTopic = "apx/waterlv/noibai/ctrl/tdz11l";
+const char* dataTopic = "apx/waterlv/noibai/data/tdz11l";
+const char* pingAskTopic = "apx/waterlv/noibai/pingAsk/tdz11l";
+const char* pingRepTopic = "apx/waterlv/noibai/pingRep/tdz11l";
 
 char sUart[7] = {"\0"};
  

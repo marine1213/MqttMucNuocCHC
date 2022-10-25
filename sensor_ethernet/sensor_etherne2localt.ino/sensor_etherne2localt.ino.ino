@@ -11,11 +11,11 @@ const char* server = "broker.hivemq.com"; //"192.168.137.1";
 const char* serverLocal = "172.16.222.60";  //172.16.222.60
 
 const char* sensorName = "TDZ29R";
-const char* debugTopic = "apx/waterlv/noibai/tdz29r/debug";
-const char* ctrlTopic = "apx/waterlv/noibai/tdz29r/ctrl";
-const char* dataTopic = "apx/waterlv/noibai/tdz29r/data";
-const char* pingAskTopic = "apx/waterlv/noibai/tdz29r/pingAsk";
-const char* pingRepTopic = "apx/waterlv/noibai/tdz29r/pingRep";
+const char* debugTopic = "apx/waterlv/noibai/debug/tdz29r";
+const char* ctrlTopic = "apx/waterlv/noibai/ctrl/tdz29r";
+const char* dataTopic = "apx/waterlv/noibai/data/tdz29r";
+const char* pingAskTopic = "apx/waterlv/noibai/pingAsk/tdz29r";
+const char* pingRepTopic = "apx/waterlv/noibai/pingRep/tdz29r";
 
 char sUart[7] = {"\0"};
  
@@ -31,7 +31,8 @@ unsigned int CONNECTION_STATE = 7;
 unsigned long previousMillis = 0; 
 const long interval = 500; 
 char buf[150];
-byte isConnected = 0;
+bool isConnected = false;
+bool isConnectedLocal = false;
 
 void setup()
 {
@@ -48,12 +49,11 @@ void setup()
   long p = currentMillis - previousMillis;
   ltoa(p,buf,10);
   
-  mqttClient.setServer(server, 1883); 
   mqttClientLocal.setServer(serverLocal, 1883); 
-  
-  // Attempt to connect to the server with the ID "tdz1"
-  mqttConnect();
   mqttConnectLocal();
+  
+  mqttClient.setServer(server, 1883); 
+  mqttConnect();
 
   digitalWrite(CONNECTION_STATE, HIGH);
   
@@ -101,6 +101,7 @@ void loop() {
 void mqttConnect(){
       if (mqttClient.connect(sensorName,"mqttArduino","test"))  
       {
+        isConnected = true;
         mqttClient.publish(debugTopic, "Connection has been established, well done");
          
         // Ensure that we are subscribed to the topic "MakerIOTopic"
@@ -108,16 +109,18 @@ void mqttConnect(){
         mqttClient.subscribe(pingAskTopic);
         
         // Establish the subscribe event
-        mqttClient.setCallback(subscribeReceive);
+          mqttClient.setCallback(subscribeReceive);
       } 
       else 
       {
-         mqttClient.publish(debugTopic, "Looks like the server connection failed...");
+        isConnected = false;
+        mqttClient.publish(debugTopic, "Looks like the server connection failed...");
       }
 }
 void mqttConnectLocal(){
       if (mqttClientLocal.connect(sensorName,"mqttArduino","arduino;"))  
       {
+        isConnectedLocal = true;
         mqttClientLocal.publish(debugTopic, "Connection has been established, well done");
          
         // Ensure that we are subscribed to the topic "MakerIOTopic"
@@ -129,6 +132,7 @@ void mqttConnectLocal(){
       } 
       else 
       {
+        isConnectedLocal = false;
          mqttClientLocal.publish(debugTopic, "Looks like the server connection failed...");
       }
 }
@@ -181,10 +185,10 @@ void subscribeReceiveLocal(char* topic, byte* payload, unsigned int length)
   // Print the topic
   if(strPingTopic.equals(strTopic)){
     String output = "ping:" + String(sensorName);
-    mqttClient.publish(pingRepTopic, output.c_str());
+    mqttClientLocal.publish(pingRepTopic, output.c_str());
   }else{
     String tr = String("Topic:")+String(topic);
-    mqttClient.publish(debugTopic, tr.c_str());
+    mqttClientLocal.publish(debugTopic, tr.c_str());
   }
 }
 void serialFlush(){ while(Serial.available() > 0) {Serial.read();} }
