@@ -8,17 +8,16 @@ IPAddress ip(192,168,137 ,199);         //Fall back IP address
 
 // Make sure to leave out the http and slashes!
 //const char* server = "broker.hivemq.com"; //"192.168.137.1";
-const char* server = "172.16.222.60";  //172.16.222.60
+const char server[] = "172.16.222.60";  //172.16.222.60
 
-const char* sensorName = "TDZ11L";
-const char* debugTopic = "apx/waterlv/noibai/debug";
-const char* ctrlTopic = "apx/waterlv/noibai/ctrl";
-const char* dataTopic = "apx/waterlv/noibai/data";
-const char* pingAskTopic = "apx/waterlv/noibai/pingAsk";
-const char* pingRepTopic = "apx/waterlv/noibai/pingRep/tdz11l";
-const char* ipTopic = "apx/waterlv/noibai/ip";
+const char sensorName[] = "TDZ11L";
+const char debugTopic[] = "apx/waterlv/noibai/debug";
+const char ctrlTopic[] = "apx/waterlv/noibai/ctrl";
+const char dataTopic[] = "apx/waterlv/noibai/data";
+const char pingAskTopic[] = "apx/waterlv/noibai/pingAsk";
+const char pingRepTopic[] = "apx/waterlv/noibai/pingRep/tdz11l";
+const char ipTopic[] = "apx/waterlv/noibai/ip";
 
-char sUart[7] = {"\0"};
  
 // Ethernet and MQTT related objects
 EthernetClient ethClient;
@@ -29,7 +28,8 @@ unsigned int countMillis = 0;
 unsigned int CONNECTION_STATE = 7;
 unsigned long previousMillis = 0; 
 const long interval = 500; 
-char buf[150];
+char dataBuf[150];
+char buf[50];
 byte isConnected = 0;
 
 void setup()
@@ -71,7 +71,7 @@ void loop() {
         long randNumber = countMillis%6; //random(6);
         byte c = Serial.read();
         
-        sprintf(buf,"{\"name\":\"%s\",\"vals\":{\"rand\":%ld,\"data\":\"%d\"}}",sensorName,randNumber,c);
+        sprintf(dataBuf,"{\"name\":\"%s\",\"v\":{\"r\":%ld,\"data\":\"%b\"}}",sensorName,randNumber,c);
         serialFlush();
         if(mqttClient.publish(dataTopic,buf)){
             mqttClient.publish(debugTopic, "Success!");
@@ -109,13 +109,13 @@ void checkIP(){
       do{
         t = Ethernet.maintain();               // Keep looking for an IP address
 
-        String maintainRe = String(sensorName)+String(":Maintain:")+t;
-        mqttClient.publish(debugTopic, maintainRe.c_str());
+        sprintf(buf,"%s:Maintain:%d",sensorName,t);
+        mqttClient.publish(debugTopic, buf);
 
         r = Ethernet.begin(mac);              // start the Ethernet connection, connect to DHCP. 
 
-        String beginRe = String(sensorName)+String(":Begin:")+r;
-        mqttClient.publish(debugTopic, beginRe.c_str());
+        sprintf(buf,"%s:Begin:%d",sensorName,t);
+        mqttClient.publish(debugTopic, buf);
 
         if (r == 0)      
         { 
@@ -123,23 +123,20 @@ void checkIP(){
           digitalWrite(CONNECTION_STATE,LOW);
         }  
         IPAddress IPaddr = Ethernet.localIP();
-         String myLocalIP = String(sensorName)+String(" IP address is:")+String(IPaddr[0])+'.'+String(IPaddr[1])+'.'+String(IPaddr[2])+'.'+String(IPaddr[3]);
-         mqttClient.publish(ipTopic, myLocalIP.c_str());
-          Serial.println(myLocalIP);
+        sprintf(buf,"%s:IP address is:%d.%d.%d.%d",sensorName,IPaddr[0],IPaddr[1],IPaddr[2],IPaddr[3]);
+        mqttClient.publish(ipTopic, buf);
+        Serial.println(buf);
       }while(r==0);
 } 
 
 void subscribeReceive(char* topic, byte* payload, unsigned int length)
 {
-  String strPingTopic = String(pingAskTopic);
-  String strTopic = String(topic);
-  // Print the topic
-  if(strPingTopic.equals(strTopic)){
-    String output = "ping:" + String(sensorName);
-    mqttClient.publish(pingRepTopic, output.c_str());
+  if(strcmp(pingAskTopic,topic)== 0){
+    sprintf(buf,"Ping:%s",sensorName);
+    mqttClient.publish(pingRepTopic, buf);
   }else{
-    String tr = String("Topic:")+String(topic);
-    mqttClient.publish(debugTopic, tr.c_str());
+    sprintf(buf,"%s:Topic:%s",sensorName,topic);
+    mqttClient.publish(debugTopic, buf);
   }
 }
 

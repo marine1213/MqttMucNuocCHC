@@ -22,7 +22,7 @@ client.on('message',function(topic, message, packet){
 publish = (topic,msg,options)=>{  if (client.connected == true){ client.publish(topic,msg,options); } else console.log('Client is not connected!')      }
 	// console.log("===> publishing",msg);
 
-const topic=["apx/waterlv/noibai/data/tdz29r", 'apx/waterlv/noibai/ctrl/tdz29r','apx/waterlv/noibai/debug/tdz29r','apx/waterlv/noibai/pingAsk/tdz29r','apx/waterlv/noibai/pingRep/tdz29r'];
+const topic=["apx/waterlv/noibai/data", 'apx/waterlv/noibai/ctrl','apx/waterlv/noibai/debug','apx/waterlv/noibai/pingAsk','apx/waterlv/noibai/pingRep'];
 
 onConnect = () => {client.subscribe('apx/waterlv/noibai/#',{qos:1}); }
 
