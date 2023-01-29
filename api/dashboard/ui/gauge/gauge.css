@@ -14,6 +14,7 @@
   position: relative;
 }
 
+
 .gauge__value {
   position: absolute;
   width: 100%;
@@ -120,4 +121,36 @@
   /*top: -20px;*/
   transform: translate(18px, -7px);
   color: #fff;
+}
+
+@media only screen and (max-width: 600px) {
+  .gauge__value {
+    display: none;
+  }
+
+  .gauge__background {
+    left: 0%;
+  }
+/*
+  .gauge__fill {
+    position: absolute;
+    width: 100%;
+    top: 80%;
+    height:  20%;
+    background: #4bf542;
+    transform-origin: center top;
+    transition: height 1s ease-out, top 1s ease-out;
+  }
+*/
+  .gauge__notify {
+    left: 104%;
+  }
+
+  .gauge__numbers {
+    left: 110%;
+  }
+
+  .gauge__tx span{
+    display: none;
+  }
 }

@@ -171,8 +171,10 @@ askAllSensors();
 setInterval(askAllSensors,2000);
 
 	forwardAskPing=(sensorName,delayValue)=>{
-		if(delayValue==undefined)
+		if(delayValue==undefined){
+			console.log(sensorName);
 			mapPage.pulsingDotList[sensorName].render = mapPage.renderDark;
+		}
 	}
 
 askPing();

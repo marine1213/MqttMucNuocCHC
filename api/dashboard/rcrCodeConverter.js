@@ -37,7 +37,8 @@ heightToBarData=(height,rainSensor)=>{
 function codeToHeight(adcLv){
 	let output = {status:true,result:'init',rain:0};
 	let inputCode = parseInt(adcLv);
-	let waterLvCode = adcLv & 0x11111; output.rainSensor = (inputCode >> 5) & 1;
+	// console.log(inputCode+'-'+adcLv);
+	let waterLvCode = adcLv & 0b11111; output.rainSensor = (inputCode >> 5) & 1;
 	switch(waterLvCode){
 			case 0b10000: output.result = 'ok'; output.height = 13; break;
 			case 0b01111: output.result = 'ok'; output.height = 12; break;

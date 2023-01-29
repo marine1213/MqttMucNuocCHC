@@ -33,6 +33,7 @@ setBarData=(htmlId,height,rainSensor,noSignal)=>{let ob=heightToBarData(height,r
 
 //map the data following the order in sensorList
 setRcrUiData=(sensorName,sensorCode,noSignal)=>{
+	console.log(sensorName+'-'+sensorCode);
 	let output = codeToHeight(sensorCode);  //fake Values
 	let obData = setBarData(sensorName,output.height,output.rainSensor,noSignal);
 	uiData.rcrData[sensorName] = obData;

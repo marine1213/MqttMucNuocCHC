@@ -1,7 +1,7 @@
 var mqtt    = require('mqtt');
-// var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttNodeSvNaocCN"});
+var client  = mqtt.connect("mqtt://broker.mqttdashboard.com",{clientId:"mqttNodeSvNaocCN"});
 // var client  = mqtt.connect("mqtt://192.168.137.1");
-var client  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
+// var client  = mqtt.connect("mqtt://172.16.222.60",{clientId:"mqttNodeSvNaocCN",username: 'DoiThongTinNAOC', password: 'Thongtindanduong2019',});
 // var client  = mqtt.connect("mqtt://127.0.0.1");
 // var client  = mqtt.connect("mqtt://172.16.222.60");
 
